@@ -25,3 +25,16 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+
+.react-flow__edge-path {
+  stroke: green !important;
+  stroke-width: 2px !important;
+  stroke-dasharray: 5 5; /* Dotted effect */
+  animation: dash-animation 1.5s linear infinite;
+}
+
+@keyframes dash-animation {
+  to {
+    stroke-dashoffset: -10;
+  }
+}
