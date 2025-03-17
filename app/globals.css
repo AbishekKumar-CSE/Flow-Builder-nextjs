@@ -25,3 +25,61 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+
+.react-flow__edge-path {
+  stroke: green !important;
+  stroke-width: 3px !important;
+  stroke-dasharray: 5 5; /* Dotted effect */
+  animation: dash-animation 1.5s linear infinite;
+}
+
+@keyframes dash-animation {
+  to {
+    stroke-dashoffset: -10;
+  }
+}
+
+/* Custom styling for the node container */
+.custom-node {
+  background: white;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  border: 1px solid #ccc;
+  text-align: center;
+}
+
+/* Source Handle (Right Side) */
+.react-flow__handle-right {
+  background: blue !important;  /* Change color */
+  width: 12px !important;
+  height: 12px !important;
+  border-radius: 50% !important;
+  border: 2px solid white !important;
+}
+
+/* Target Handle (Left Side) */
+.react-flow__handle-left {
+  background: blue !important; /* Change color */
+  width: 12px !important;
+  height: 12px !important;
+  border-radius: 50% !important;
+  border: 2px solid white !important;
+}
+
+/* Base handle styles */
+.custom-handle {
+  width: 14px;
+  height: 14px;
+  border-radius: 8px;
+  border: 2px solid white !important;
+  position: absolute;
+  top: 50%;
+  right: -5px;
+  transform: translateY(-50%);
+}
+
+/* Inactive state */
+.inactive {
+  background: red !important;
+}
