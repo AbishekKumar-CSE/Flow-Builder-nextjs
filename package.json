@@ -1,7 +1,8 @@
 {
   "name": "chatbot-flow-builder",
-  "version": "0.1.0",
-  "private": true,
+  "version": "0.1.2",
+  "private": false,
+  "main": "index.js",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -19,9 +20,16 @@
     "postcss": "8.4.23",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-modal": "^3.16.3",
+    "react-quill": "^2.0.0",
     "react-redux": "^9.2.0",
     "reactflow": "^11.7.1",
     "sweetalert2": "^11.17.2",
     "tailwindcss": "3.3.2"
-  }
+  },
+  "description": "![](https://github.com/AbishekKumar-CSE/Flow-Builder-nextjs.git)\r This project is a simple React application built with [React Flow](https://reactflow.dev/) and next.js . It demonstrates the implementation of drag and drop nodes with the ability to connect them. The state of the nodes and their connections can be saved and restored.",
+  "devDependencies": {},
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }

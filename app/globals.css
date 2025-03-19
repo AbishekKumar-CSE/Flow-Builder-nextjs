@@ -26,10 +26,10 @@ body {
     rgb(var(--background-start-rgb));
 }
 
-.react-flow__edge-path {
+/* .react-flow__edge-path {
   stroke: green !important;
   stroke-width: 3px !important;
-  stroke-dasharray: 5 5; /* Dotted effect */
+  stroke-dasharray: 5 5; 
   animation: dash-animation 1.5s linear infinite;
 }
 
@@ -37,7 +37,7 @@ body {
   to {
     stroke-dashoffset: -10;
   }
-}
+} */
 
 /* Custom styling for the node container */
 .custom-node {
@@ -51,7 +51,7 @@ body {
 
 /* Source Handle (Right Side) */
 .react-flow__handle-right {
-  background: blue !important;  /* Change color */
+  background: #4cabab !important;  /* Change color */
   width: 12px !important;
   height: 12px !important;
   border-radius: 50% !important;
@@ -60,15 +60,16 @@ body {
 
 /* Target Handle (Left Side) */
 .react-flow__handle-left {
-  background: blue !important; /* Change color */
-  width: 12px !important;
-  height: 12px !important;
+  background: white !important; /* Change color */
+  border: 5px solid #4cabab !important;
+  width: 15px !important;
+  height: 15px !important;
   border-radius: 50% !important;
-  border: 2px solid white !important;
+  left: -8px !important;
 }
 
 /* Base handle styles */
-.custom-handle {
+/* .custom-handle {
   width: 14px;
   height: 14px;
   border-radius: 8px;
@@ -77,9 +78,53 @@ body {
   top: 50%;
   right: -5px;
   transform: translateY(-50%);
+} */
+
+.custom-handle {
+  width: 24px;
+  height: 24px;
+  background-color: #4fd1c5; /* Light teal background */
+  border: 2px solid white;
+  border-radius: 50%;
+  position: absolute;
+  right: -8px !important; /* Adjust so it slightly overlaps */
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.handle-icon {
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  pointer-events: none;
 }
 
 /* Inactive state */
 .inactive {
   background: red !important;
 }
+
+.react-flow__edge-path {
+  stroke: #4cabab !important;
+  stroke-width: 3px !important;
+}
+
+
+.react-flow__edge-path:hover {
+  stroke: #4cabab !important;
+  stroke-width: 3px !important;
+  stroke-dasharray: 5 5; 
+  animation: dash-animation 1.5s linear infinite;
+}
+
+@keyframes dash-animation {
+  to {
+    stroke-dashoffset: -10;
+  }}
+
+  

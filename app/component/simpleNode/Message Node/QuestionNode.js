@@ -49,7 +49,7 @@ function TextNode({ data, selected, id }) {
           <div className="py-2">
             <p className="font-semibold text-sm text-gray-700 mb-1">Send Message</p>
             <p className="border border-gray-300 rounded-lg p-2 bg-gray-100">
-              {formatLabel(data.label)}
+              {formatLabel(data.label === "questionnode" ? "Welcome to { company }" : data.label)}
             </p>
           </div>
         ) : (
@@ -64,12 +64,15 @@ function TextNode({ data, selected, id }) {
         position={Position.Left}
         className="w-1 rounded-full bg-slate-500"
       />
-      <Handle
-        id="b"
-        type="source"
-        position={Position.Right}
-        className="w-1 rounded-full bg-gray-500"
-      />
+           <Handle
+             id="b"
+             type="source"
+             position={Position.Right}
+             className="custom-handle p-2" 
+           >
+                     <span className="handle-icon">+</span>
+     
+           </Handle>
     </div>
   );
 }

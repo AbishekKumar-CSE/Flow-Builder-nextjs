@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import Data from "../../../data/data";
 import { X, ChevronLeft, Edit, List, ArrowLeft } from "lucide-react";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
 export default function textMediaSidebar({
   dataUserId,
@@ -72,18 +74,29 @@ export default function textMediaSidebar({
       }
     }, []);
 
+    const handleChange = (content) => {
+      handleInputChange({ target: { value: content } }, "name");
+    };
+
+  const modules = {
+    toolbar: [
+      ["bold", "italic"], // Bold & Italic
+      [{ list: "ordered" }, { list: "bullet" }], // Ordered & Bullet List
+    ],
+  };
+
   return (
     <>
       {selectedNode ? (
         <aside className={`border-r p-5 text-sm w-80 h-screen shadow-md transition-all duration-300 flex flex-col ${
           isDarkMode
-            ? "bg-gray-900 border-gray-700 text-white"
-            : "bg-gray-900 border-gray-700 text-white"
+            ? "bg-white border-gray-700 text-gray-900"
+            : "bg-white border-gray-700 text-gray-900"
         }`}>
           <div className="relative flex items-center justify-between mb-4">
           <h3
             className={`text-xl font-bold flex items-center gap-2 pr-8 ${
-              isDarkMode ? "text-white" : "text-blue-900"
+              isDarkMode ? "text-black" : "text-blue-900"
             }`}
           >
             <Edit className="w-5 h-5" />
@@ -100,8 +113,7 @@ export default function textMediaSidebar({
         </div>
 
       {/* ID Select for Testing */}
-      <label className="block text-sm font-medium mb-1">Select ID:</label>
-      <div className="pt-1">
+      {/* <div className="pt-1">
         <select
           className="p-2 w-full border rounded transition-all duration-200 focus:outline-none text-black"
           onChange={(e) => sessionStorage.setItem("id", e.target.value)}
@@ -113,7 +125,7 @@ export default function textMediaSidebar({
             </option>
           ))}
         </select>
-      </div>
+      </div> */}
 
           {/* Dropdown for selecting file type */}
           <label className="block text-sm font-medium mb-1 py-2">
@@ -170,34 +182,49 @@ export default function textMediaSidebar({
             </div>
           )}
 
-          {/* Node Name Input */}
-          <label className="block text-sm font-medium">
-            Text Message (Optional):
-          </label>
-          <input
-            type="text"
-            className="w-full p-2 mb-2 border text-black border-blue-300 rounded my-2"
-            value={nodeName}
-            onChange={(e) => handleInputChange(e, "name")}
-          />
+      <label className="block text-sm font-medium mb-1">Create Message:</label>
 
-          {/* Select Field */}
-          <label className="block text-sm font-medium">
-            Select Items:
-          </label>
-          <div className="pt-1">
-            <select
-              className="p-2 flex w-full border text-black border-blue-300 rounded"
-              onChange={handleSelectChange}
-            >
-              <option value="">Select an item</option>
-              {keys.map((item, index) => (
-                <option key={index} value={item}>
-                  {item}
-                </option>
-              ))}
-            </select>
-          </div>
+
+{/* Node Name Input */}
+<div className="w-full  mt-4 p-4 bg-white border border-gray-300 rounded-md shadow-sm">
+      {/* Label */}
+      <label className="block text-sm font-medium text-gray-700 py-2">
+        Enter Message(Optional):
+      </label>
+
+      {/* React Quill Editor */}
+      <div className="border border-gray-300 rounded-md shadow-sm">
+        <ReactQuill
+          theme="snow"
+          value={nodeName === "textmedianode" ? "" : nodeName}
+          onChange={handleChange}
+          className="mb-2"
+          placeholder="Enter Your Message"
+          modules={modules}
+        />
+      </div>
+
+      {/* Select Field */}
+      <div className="mt-4">
+        <label className="block text-sm font-medium text-gray-700">
+          Fields
+        </label>
+        <div className="relative mt-1">
+          <select
+            className="w-full p-2 border border-gray-300 rounded-md text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            onChange={handleSelectChange}
+          >
+            <option value="">Select an item</option>
+            {keys.map((item, index) => (
+              <option key={index} value={item}>
+                {item}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+    </div>
+
         </aside>
       ) : null}
     </>

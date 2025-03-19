@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Handle, Position, useReactFlow } from "reactflow";
 import { Trash2, PanelBottom } from "lucide-react";
 import Data from "@/app/data/data";
@@ -15,7 +15,7 @@ function ListButtonNode({ data, selected, id }) {
   // Find specific user by ID (if data.userId is provided)
   const userData = dataList.userId
     ? dataList.find((user) => user.id === userDataId.id)
-    : dataList[userDataId || 2]; // Default to the first user if no ID is given
+    : dataList[userDataId || 0]; // Default to the first user if no ID is given
 
   // Function to replace placeholders with actual values
   const formatLabel = (label) => {
@@ -26,10 +26,11 @@ function ListButtonNode({ data, selected, id }) {
   };
 
   console.log(data);
+  const [selected1, setSelected1] = useState(null);
 
   return (
     <div
-      className={`w-64 shadow-lg rounded-lg bg-white transition-all duration-200 ${
+      className={`w-80 shadow-lg rounded-lg bg-white transition-all duration-200 ${
         selected
           ? "border-2 border-indigo-500 scale-105"
           : "border border-gray-200"
@@ -54,7 +55,7 @@ function ListButtonNode({ data, selected, id }) {
           {data.label && userData && (
             <div className="">
               <p className="font-bold my-1">Send Message</p>
-              <p className="border rounded p-2">{formatLabel(data.label)}</p>
+              <p className="border rounded p-2">{formatLabel(data.label === "listbuttonnodde" ? "Welcome to { company }" : data.label)}</p>
             </div>
           )}
         </div>
@@ -86,6 +87,48 @@ function ListButtonNode({ data, selected, id }) {
               />
             </div>
           ))}
+
+          {/* List items display */}
+          {data.list?.length ? (
+        data.list.map((item, index) => (
+          <div key={index} className="w-full mt-2 p-2 bg-gray-100 rounded-lg">
+            <div className="relative flex justify-between items-center p-2 border-b last:border-b-0">
+              <label className="flex items-center space-x-2">
+                <input
+                  type="radio"
+                  name="listItem"
+                  className="cursor-pointer"
+                  onChange={() => setSelected1(index)}
+                  checked={selected1 === index}
+                />
+                <span className="font-semibold text-gray-700">
+                  {item.title || "Untitled"}
+                </span>
+              </label>
+
+              {/* Handle for flow connection */}
+              <Handle
+                id={`handle-list-${index}`}
+                type="source"
+                position={Position.Right}
+                className={`custom-handle ${data.isActive ? "active" : "inactive"}`}
+                style={{
+                  right: -10,
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                }}
+              />
+            </div>
+
+            {/* Show description when the radio button is selected */}
+            {selected1 === index && (
+              <p className="mt-2 text-sm text-gray-600">{item.description || "No description"}</p>
+            )}
+          </div>
+        ))
+      ) : (
+        <p className="hidden"></p>
+      )}
         </div>
       </div>
 
@@ -95,12 +138,12 @@ function ListButtonNode({ data, selected, id }) {
         position={Position.Left}
         className="w-1 rounded-full bg-slate-500"
       />
-      <Handle
+      {/* <Handle
         id="b"
         type="source"
         position={Position.Right}
         className="w-1 rounded-full bg-gray-500"
-      />
+      /> */}
     </div>
   );
 }

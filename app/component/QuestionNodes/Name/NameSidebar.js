@@ -3,6 +3,8 @@
 import Data from "../../../data/data";
 import { useState, useEffect } from "react";
 import { X, ChevronLeft, Edit, List, ArrowLeft } from "lucide-react";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
 export default function NameSidebar({
   dataUserId,
@@ -32,8 +34,17 @@ export default function NameSidebar({
   
 
   // Handle input changes dynamically based on selected field
-  const handleInputChange = (e) => {
-    setInputValue(e.target.value);
+  // const handleInputChange = (e) => {
+  //   setInputValue(e.target.value);
+  // };
+
+  const handleInputChange = (event, field) => {
+    const value = event.target.value;
+    if (field === "name") setNodeName(value);
+    if (field === "link") setNodeLink(value);
+    if (field === "option") setNodeOption(value);
+    setInputValue(event.target.value);
+
   };
 
   // Function to update data dynamically
@@ -60,22 +71,67 @@ export default function NameSidebar({
     }
   }, []);
 
+  const handleAddNewField = () => {
+    const newField = sessionStorage.getItem("newFieldName"); // Get field name from session
+    if (!newField) return;
+  
+    // Update all data objects with the new field
+    Data.data.forEach((user) => {
+      if (!(newField in user)) {
+        user[newField] = "";
+      }
+    });
+  
+    updateUserName();
+    alert("Field success")
+  };
+
+  const [newField, setNewField] = useState("")
+
+
+  const handleNewField = (e) => {
+    const value = e.target.value;
+    setNewField(value); 
+    sessionStorage.setItem("newFieldName", value); // Store in session storage
+  };
+
+  const handleSelectChange = (e) => {
+    const value = e.target.value;
+    if (value) {
+      // Append the selected item in curly brackets
+      const updatedText = `${nodeName} { ${value} }`;
+      handleInputChange({ target: { value: updatedText } }, "name");
+      sessionStorage.setItem("textNodeField", value);
+    }
+  };
+
+  const handleChange = (content) => {
+    handleInputChange({ target: { value: content } }, "name");
+  };
+
+const modules = {
+  toolbar: [
+    ["bold", "italic"], // Bold & Italic
+    [{ list: "ordered" }, { list: "bullet" }], // Ordered & Bullet List
+  ],
+};
+
   return (
     <>
       {selectedNode ? (
         <aside className={`border-r p-5 text-sm w-80 h-screen shadow-md transition-all duration-300 flex flex-col ${
           isDarkMode
-            ? "bg-gray-900 border-gray-700 text-white"
-            : "bg-gray-900 border-gray-700 text-white"
+            ? "bg-white border-gray-700 text-gray-900"
+            : "bg-white border-gray-700 text-gray-900"
         }`}>
           <div className="relative flex items-center justify-between mb-4">
           <h3
             className={`text-xl font-bold flex items-center gap-2 pr-8 ${
-              isDarkMode ? "text-white" : "text-blue-900"
+              isDarkMode ? "text-black" : "text-blue-900"
             }`}
           >
             <Edit className="w-5 h-5" />
-            Ask For Question
+            Ask For Name
           </h3>
 
           {/* Close Button (X) - Top Right */}
@@ -88,12 +144,12 @@ export default function NameSidebar({
         </div>
 
           {/* ID Selection */}
-          <div className="pt-1">
+          {/* <div className="pt-1">
             <label className="block text-sm py-2 font-medium ">
               Select User ID:
             </label>
             <select
-              className="p-2 flex w-full border text-black border-blue-300 rounded"
+              className="p-2 flex w-full border text-black border-blue-300 rounded "
               onChange={handleIdChange}
             >
               <option value="">Select an ID</option>
@@ -103,26 +159,60 @@ export default function NameSidebar({
                 </option>
               ))}
             </select>
-          </div>
+          </div> */}
 
           {/* Select Field To Update */}
           <label className="block text-sm font-medium py-2 mt-2">
-            Select Field:
+            Question Text
           </label>
           <div className="pt-1">
+
+            <textarea 
+              type="text"
+              placeholder="Enter Message to show ..."
+              className="p-2 flex w-full border text-black border-blue-300 rounded mb-3"
+              value={nodeName === "Start" || "questionnamenode" ? "Enter Your Name" : nodeName}
+              onChange={(e) => handleInputChange(e, "name")}
+            />
+            <label className="block text-sm font-medium py-2">Select Field to Store</label>
+
+
             <select
               className="p-2 flex w-full border text-black border-blue-300 rounded"
               onChange={handleFieldSelect}
             >
-              <option value="">Select a field</option>
+              <option value="name">Select a field</option>
               {keys.map((item, index) => (
                 <option key={index} value={item}>
                   {item}
                 </option>
               ))}
             </select>
-          </div>
-          
+          </div>  
+
+          <div className="pt-3">
+  <label className="block text-sm font-medium py-2">Add New Field:</label>
+  <input
+    type="text"
+    placeholder="Create New field"
+    className="p-2 w-full border text-black border-blue-300 rounded mb-2"
+    onChange={handleNewField}
+  />
+
+
+  {newField ? 
+  
+  <button
+    className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+    onClick={handleAddNewField}
+  >
+    Add Field
+  </button> :
+  null
+  }
+
+</div>
+
         </aside>
       ) : null}
     </>

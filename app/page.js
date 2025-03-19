@@ -22,6 +22,7 @@ import ReactFlow, {
 import Swal from "sweetalert2";
 import "reactflow/dist/base.css";
 import "../tailwind.config.js";
+import CustomStraightEdge from "./component/CustomStepEdge.js";
 import Sidebar from "./component/mediaNode/sidebar.js";
 import AdvanceSideBar from "./component/advanceNode/advanceSideBar.js";
 import TextSideBar from "./component/simpleNode/Message Node/textSidebar.js";
@@ -31,11 +32,22 @@ import TextMediaSidebar from "./component/simpleNode/Simple Media/textMediaSideb
 import TextNode from "./component/mediaNode/TextNode.js";
 import NodeSideBar from "./component/nodeSideBar.js";
 import AdvanceNode from "./component/advanceNode/advanceNode.js";
+
 import NameQuestionNode from "./component/QuestionNodes/Name/NameQuestionNode.js";
 import NameSidebar from "./component/QuestionNodes/Name/NameSidebar.js";
+
+import PhoneQuestionNode from "./component/QuestionNodes/PhoneNumber/PhoneQuestionNode.js";
+import PhoneSidebar from "./component/QuestionNodes/PhoneNumber/PhoneSidebar.js";
+
+import EmailQuestionNode from "./component/QuestionNodes/Email/EmailQuestionNode.js";
+import EmailSidebar from "./component/QuestionNodes/Email/EmailSidebar.js";
+
+import AskQuestionNode from "./component/QuestionNodes/Question/AskQuestionNode.js";
+import AskSidebar from "./component/QuestionNodes/Question/AskSidebar.js";
+
 import ListButtonNode from "./component/advanceNode/listButtons/ListButtonNode.js";
 import ListButtonSidebar from "./component/advanceNode/listButtons/ListButtonSidebar.js";
-import { Plus } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import { motion } from "framer-motion";
 import Data from "./data/data.js";
 
@@ -54,6 +66,8 @@ const initialNodes = [
   },
 ];
 
+
+
 let id = 0;
 
 // Function for generating unique IDs for nodes
@@ -68,6 +82,9 @@ const App = () => {
       textmedianode: TextMediaNode,
       advancenode: AdvanceNode,
       questionnamenode: NameQuestionNode,
+      phonequestionnode: PhoneQuestionNode,
+      emailquestionnode: EmailQuestionNode,
+      askquestionnode: AskQuestionNode,
       listbuttonnodde: ListButtonNode,
     }),
     []
@@ -95,57 +112,151 @@ const App = () => {
   const [nodeFooter2, setNodeFooter2] = useState("");
   const [nodeFooter3, setNodeFooter3] = useState("");
   const [nodeButtons, setNodeButtons] = useState([]);
+  const [nodeList, setNodeList] = useState([]);
 
 
   // Update nodes data when nodeName or selectedElements changes
-  useEffect(() => {
-    setShowSidebar(false);
+  // useEffect(() => {
+  //   setShowSidebar(false);
 
+  //   if (selectedElements.length > 0) {
+  //     setNodes((nds) =>
+  //       nds.map((node) => {
+  //         if (node.id === selectedElements[0]?.id) {
+  //           node.data = {
+  //             ...node.data,
+  //             label: nodeName,
+  //           };
+  //         }
+  //         return node;
+  //       })
+  //     );
+  //   } else {
+  //     setNodeName("");
+  //   }
+  // }, [nodeName, selectedElements, setNodes]);
+
+
+  // useEffect(() => {
+  //   if (selectedElements.length > 0) {
+  //     setNodes((nds) =>
+  //       nds.map((node) => {
+  //         if (node.id === selectedElements[0]?.id) {
+  //           node.data = {
+  //             ...node.data,
+  //             label: nodeName,
+  //             image: nodeImage,
+  //             link: nodeLink,
+  //             video: nodeVideo,
+  //             audio: nodeAudio,
+  //             file: nodeFile,
+  //             cta: nodeCta,
+  //             ctabutton: nodeCtaButton,
+  //             buttons: nodeButtons,
+  //             list: nodeList,
+  //             button1: nodeButton1,
+  //             button2: nodeButton2,
+  //             button3: nodeButton3,
+  //             footer1: nodeFooter1,
+  //             footer2: nodeFooter2,
+  //             footer3: nodeFooter3,
+  //           };
+  //         }
+  //         return node;
+  //       })
+  //     );
+  //   } else {
+  //     setNodeName("");
+  //     setNodeImage("");
+  //     setNodeLink("");
+  //     setNodeOption("");
+  //     setNodeVideo("");
+  //     setNodeFile("");
+  //     setNodeAudio("");
+  //     setNodeCta("");
+  //     setNodeCtaButton("");
+  //     setNodeButtons([]);
+  //     setNodeList([]);
+  //     setNodeButton1("");
+  //     setNodeButton2("");
+  //     setNodeButton3("");
+  //     setNodeFooter1("");
+  //     setNodeFooter2("");
+  //     setNodeFooter3("");
+  //   }
+  // }, [
+  //   // selectedElements
+  //   nodeName,
+  //   nodeImage,
+  //   nodeLink,
+  //   nodeVideo,
+  //   selectedElements,
+  //   nodeCta,
+  //   nodeCtaButton,
+  //   nodeButtons,
+  //   nodeList,
+  //   nodeButton1,
+  //   nodeButton2,
+  //   nodeButton3,
+  //   nodeFooter1,
+  //   nodeFooter2,
+  //   nodeFooter3,
+  //   setNodes,
+  // ]);
+
+  useEffect(() => {
     if (selectedElements.length > 0) {
       setNodes((nds) =>
-        nds.map((node) => {
-          if (node.id === selectedElements[0]?.id) {
-            node.data = {
-              ...node.data,
-              label: nodeName,
-            };
-          }
-          return node;
-        })
+        nds.map((node) =>
+          node.id === selectedElements[0]?.id
+            ? {
+                ...node,
+                data: {
+                  ...node.data,
+                  label: nodeName,
+                  image: nodeImage,
+                  link: nodeLink,
+                  video: nodeVideo,
+                  audio: nodeAudio,
+                  file: nodeFile,
+                  cta: nodeCta,
+                  ctabutton: nodeCtaButton,
+                  buttons: nodeButtons,
+                  list: nodeList,
+                  button1: nodeButton1,
+                  button2: nodeButton2,
+                  button3: nodeButton3,
+                  footer1: nodeFooter1,
+                  footer2: nodeFooter2,
+                  footer3: nodeFooter3,
+                },
+              }
+            : node
+        )
       );
-    } else {
-      setNodeName("");
     }
-  }, [nodeName, selectedElements, setNodes]);
-
+  }, [
+    nodeName,
+    nodeImage,
+    nodeLink,
+    nodeVideo,
+    nodeAudio,
+    nodeFile,
+    nodeCta,
+    nodeCtaButton,
+    nodeButtons,
+    nodeList,
+    nodeButton1,
+    nodeButton2,
+    nodeButton3,
+    nodeFooter1,
+    nodeFooter2,
+    nodeFooter3,
+    selectedElements,
+  ]);
+  
   useEffect(() => {
-    if (selectedElements.length > 0) {
-      setNodes((nds) =>
-        nds.map((node) => {
-          if (node.id === selectedElements[0]?.id) {
-            node.data = {
-              ...node.data,
-              label: nodeName,
-              image: nodeImage,
-              link: nodeLink,
-              video: nodeVideo,
-              audio: nodeAudio,
-              file: nodeFile,
-              cta: nodeCta,
-              ctabutton: nodeCtaButton,
-              buttons: nodeButtons,
-              button1: nodeButton1,
-              button2: nodeButton2,
-              button3: nodeButton3,
-              footer1: nodeFooter1,
-              footer2: nodeFooter2,
-              footer3: nodeFooter3,
-            };
-          }
-          return node;
-        })
-      );
-    } else {
+    if (selectedElements.length === 0) {
       setNodeName("");
       setNodeImage("");
       setNodeLink("");
@@ -156,6 +267,7 @@ const App = () => {
       setNodeCta("");
       setNodeCtaButton("");
       setNodeButtons([]);
+      setNodeList([]);
       setNodeButton1("");
       setNodeButton2("");
       setNodeButton3("");
@@ -163,24 +275,8 @@ const App = () => {
       setNodeFooter2("");
       setNodeFooter3("");
     }
-  }, [
-    // selectedElements
-    nodeName,
-    nodeImage,
-    nodeLink,
-    nodeVideo,
-    selectedElements,
-    nodeCta,
-    nodeCtaButton,
-    nodeButtons,
-    nodeButton1,
-    nodeButton2,
-    nodeButton3,
-    nodeFooter1,
-    nodeFooter2,
-    nodeFooter3,
-    setNodes,
-  ]);
+  }, [selectedElements]);
+  
 
   const onNodeClick = useCallback((_event, node) => {
     setSelectedElements([node]);
@@ -192,6 +288,7 @@ const App = () => {
     setNodeCta(node.data.cta || "");
     setNodeCtaButton(node.data.ctabutton || "");
     setNodeButtons(node.data.buttons || []);
+    setNodeList(node.data.list || []);
     setNodeButton1(node.data.nodebutton1 || "");
     setNodeButton2(node.data.nodebutton2 || "");
     setNodeButton3(node.data.nodebutton3 || "");
@@ -275,14 +372,34 @@ const App = () => {
     restoreFlow();
   }, [setNodes, setViewport]);
 
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setViewport({ x: 10, y: 90, zoom: 0.89 }); // Adjust zoom level
+    }, 0); // Increased delay for React Flow readiness
+  
+    return () => clearTimeout(timeout);
+  }, [setViewport]); // Ensure it runs after mounting
+  
+
   // Handle edge connection
+  // const onConnect = useCallback(
+  //   (params) => {
+  //     console.log("Edge created: ", params);
+  //     setEdges((eds) => addEdge(params, eds));
+  //   },
+  //   [setEdges]
+  // );
+
   const onConnect = useCallback(
     (params) => {
       console.log("Edge created: ", params);
-      setEdges((eds) => addEdge(params, eds));
+      setEdges((eds) =>
+        addEdge({ ...params, type: "step" }, eds) // Force straight edges
+      );
     },
     [setEdges]
   );
+  
 
   // Enable drop effect on drag over
   const onDragOver = useCallback((event) => {
@@ -335,9 +452,21 @@ const App = () => {
   const updateUserName = (newName) => {
     setUserData([...Data.data]); // Re-render by setting updated data
   };
+
+  const edgeTypes = {
+    step: CustomStraightEdge, // Register the edge
+  };
+
+  const { fitView } = useReactFlow();
+
+  useEffect(() => {
+    fitView({ padding: 0.5 }); // Adjust padding as needed
+  }, []);
+
+  
   return (
     <div className="flex flex-row min-h-screen lg:flex-row">
-      {showSidebar ? (
+      {showSidebar && (
         <NodeSideBar
           nodeName={nodeName}
           setNodeName={setNodeName}
@@ -360,7 +489,68 @@ const App = () => {
           selectedNode={selectedElements[0]}
           setSelectedElements={setSelectedElements}
         />
-      ) : selectedElements[0]?.type === "textnode" ? (
+      ) } 
+
+      <div className="flex-grow h-screen" ref={reactFlowWrapper}>
+        <ReactFlow
+        //  defaultZoom={0.80}
+          nodes={nodes}
+          nodeTypes={nodeTypes}
+          edges={edges}
+          edgeTypes={edgeTypes} 
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onConnect={onConnect}
+          onInit={setReactFlowInstance}
+          onDrop={onDrop}
+          onDragOver={onDragOver}
+          style={rfStyle}
+          onNodeClick={onNodeClick}
+          onPaneClick={() => {
+            setSelectedElements([]); // Reset selected elements when clicking on pane
+            setNodes((nodes) =>
+              nodes.map((n) => ({
+                ...n,
+                selected: false, // Reset selected state of nodes when clicking on pane
+              }))
+            );
+          }}
+          fitView
+        >
+          <Background variant="dots" gap={12} size={1} />
+          <Controls />
+          {/* <MiniMap zoomable pannable /> */}
+          <Panel>
+            <motion.button
+              className=" m-2 bg-blue-500 hover:bg-blue-700 text-white font-bold p-3 rounded-full"
+              whileTap={{ scale: 0.9 }}
+              whileHover={{ scale: 1.1 }}
+              onClick={onMenuShow}
+            >
+              {showSidebar ? 
+                <X size={16} />
+                :
+                <Plus size={16} />
+            }
+              
+            </motion.button>
+            <button
+              className="m-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              onClick={onSave}
+            >
+              save flow
+            </button>
+            <button
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              onClick={onRestore}
+            >
+              restore flow
+            </button>
+          </Panel>
+        </ReactFlow>
+      </div>
+
+      {selectedElements[0]?.type === "textnode" ? (
         <Sidebar
           dataUserId={dataUserId}
           nodeName={nodeName}
@@ -418,6 +608,61 @@ const App = () => {
           setSelectedElements={setSelectedElements}
         />
       ) 
+
+      : selectedElements[0]?.type === "phonequestionnode" ? (
+        <PhoneSidebar
+        dataUserId={userData.map((user) => user.id)}
+        updateUserName={updateUserName}
+          nodeName={nodeName}
+          setNodeName={setNodeName}
+          nodeLink={nodeLink}
+          setNodeLink={setNodeLink}
+          nodeFooter1={nodeFooter1}
+          setNodeFooter1={setNodeFooter1}
+          nodeFooter2={nodeFooter2}
+          setNodeFooter2={setNodeFooter2}
+          nodeFooter3={nodeFooter3}
+          setNodeFooter3={setNodeFooter3}
+          selectedNode={selectedElements[0]}
+          setSelectedElements={setSelectedElements}
+        />
+      ) 
+      : selectedElements[0]?.type === "emailquestionnode" ? (
+        <EmailSidebar
+        dataUserId={userData.map((user) => user.id)}
+        updateUserName={updateUserName}
+          nodeName={nodeName}
+          setNodeName={setNodeName}
+          nodeLink={nodeLink}
+          setNodeLink={setNodeLink}
+          nodeFooter1={nodeFooter1}
+          setNodeFooter1={setNodeFooter1}
+          nodeFooter2={nodeFooter2}
+          setNodeFooter2={setNodeFooter2}
+          nodeFooter3={nodeFooter3}
+          setNodeFooter3={setNodeFooter3}
+          selectedNode={selectedElements[0]}
+          setSelectedElements={setSelectedElements}
+        />
+      ) 
+      : selectedElements[0]?.type === "askquestionnode" ? (
+        <AskSidebar
+        dataUserId={userData.map((user) => user.id)}
+        updateUserName={updateUserName}
+          nodeName={nodeName}
+          setNodeName={setNodeName}
+          nodeLink={nodeLink}
+          setNodeLink={setNodeLink}
+          nodeFooter1={nodeFooter1}
+          setNodeFooter1={setNodeFooter1}
+          nodeFooter2={nodeFooter2}
+          setNodeFooter2={setNodeFooter2}
+          nodeFooter3={nodeFooter3}
+          setNodeFooter3={setNodeFooter3}
+          selectedNode={selectedElements[0]}
+          setSelectedElements={setSelectedElements}
+        />
+      ) 
       : selectedElements[0]?.type === "listbuttonnodde" ? (
         <ListButtonSidebar
         dataUserId={dataUserId}
@@ -439,6 +684,8 @@ const App = () => {
           setNodeCtaButton={setNodeCtaButton}
           nodeButtons={nodeButtons}
           setNodeButtons={setNodeButtons}
+          nodeList={nodeList}
+          setNodeList={setNodeList}
           nodeButton1={nodeButton1}
           setNodeButton1={setNodeButton1}
           nodeButton2={nodeButton2}
@@ -517,58 +764,6 @@ const App = () => {
           setSelectedElements={setSelectedElements}
         />
       )}
-
-      <div className="flex-grow h-screen" ref={reactFlowWrapper}>
-        <ReactFlow
-          nodes={nodes}
-          nodeTypes={nodeTypes}
-          edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-          onInit={setReactFlowInstance}
-          onDrop={onDrop}
-          onDragOver={onDragOver}
-          style={rfStyle}
-          onNodeClick={onNodeClick}
-          onPaneClick={() => {
-            setSelectedElements([]); // Reset selected elements when clicking on pane
-            setNodes((nodes) =>
-              nodes.map((n) => ({
-                ...n,
-                selected: false, // Reset selected state of nodes when clicking on pane
-              }))
-            );
-          }}
-          fitView
-        >
-          <Background variant="dots" gap={12} size={1} />
-          <Controls />
-          {/* <MiniMap zoomable pannable /> */}
-          <Panel>
-            <motion.button
-              className=" m-2 bg-blue-500 hover:bg-blue-700 text-white font-bold p-3 rounded-full"
-              whileTap={{ scale: 0.9 }}
-              whileHover={{ scale: 1.1 }}
-              onClick={onMenuShow}
-            >
-              <Plus size={16} />
-            </motion.button>
-            <button
-              className=" m-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-              onClick={onSave}
-            >
-              save flow
-            </button>
-            <button
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-              onClick={onRestore}
-            >
-              restore flow
-            </button>
-          </Panel>
-        </ReactFlow>
-      </div>
     </div>
   );
 };

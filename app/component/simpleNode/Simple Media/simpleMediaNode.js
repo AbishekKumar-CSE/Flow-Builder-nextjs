@@ -36,7 +36,9 @@ function TextMediaNode({ data, selected, id }) {
       <div className="flex flex-col">
         {/* Header */}
         <div className="px-3 py-2 text-left text-white text-xs font-semibold rounded-t-lg bg-gradient-to-r from-blue-500 to-indigo-500 flex justify-between items-center">
-          <span className="flex items-center gap-1"><MessageCircle size={14} className="opacity-90" /> Message Node</span>
+          <span className="flex items-center gap-1">
+            <MessageCircle size={14} className="opacity-90" /> Message Node
+          </span>
           <button
             onClick={() => deleteElements({ nodes: [{ id }] || 1 })}
             className="text-white hover:text-red-500 transition-transform transform hover:scale-110"
@@ -55,11 +57,24 @@ function TextMediaNode({ data, selected, id }) {
               className="w-full h-auto rounded-md mt-2"
             />
 
+            <Handle
+              id={`handle-image}`} // Unique ID for each handle
+              type="source"
+              position={Position.Right}
+              className={`custom-handle ${
+                data.isActive ? "active" : "inactive"
+              }`}
+              style={{
+                right: -10, // Adjust this value as needed
+                top: "50%",
+                transform: "translateY(-50%)",
+              }}
+            />
           </div>
         )}
 
         {data.video && (
-          <div className="mb-2">
+          <div className="mb-2 relative">
             <p className="font-bold">Send Video</p>
             <video
               controls
@@ -67,6 +82,20 @@ function TextMediaNode({ data, selected, id }) {
             >
               <source src={data.video} type="video/mp4" />\
             </video>
+
+            <Handle
+              id={`handle-video}`} // Unique ID for each handle
+              type="source"
+              position={Position.Right}
+              className={`custom-handle ${
+                data.isActive ? "active" : "inactive"
+              }`}
+              style={{
+                right: -10, // Adjust this value as needed
+                top: "50%",
+                transform: "translateY(-50%)",
+              }}
+            />
           </div>
         )}
 
@@ -78,7 +107,9 @@ function TextMediaNode({ data, selected, id }) {
                 Send Message
               </p>
               <p className="border border-gray-300 rounded-lg p-2 bg-gray-100">
-                {formatLabel(data.label)}
+                {formatLabel(
+                  data.label === "textmedianode" ? "Hello { name }" : data.label
+                )}
               </p>
             </div>
           ) : (
@@ -93,12 +124,15 @@ function TextMediaNode({ data, selected, id }) {
         position={Position.Left}
         className="w-1 rounded-full bg-slate-500"
       />
-      <Handle
-        id="b"
-        type="source"
-        position={Position.Right}
-        className="w-1 rounded-full bg-gray-500"
-      />
+            <Handle
+              id="b"
+              type="source"
+              position={Position.Right}
+              className="custom-handle p-2" 
+            >
+                      <span className="handle-icon">+</span>
+      
+            </Handle>
     </div>
   );
 }

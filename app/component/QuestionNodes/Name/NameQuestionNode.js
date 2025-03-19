@@ -28,7 +28,8 @@ function NameQuestionNode({ data, selected, id, updateUserName }) {
     }
   };
 
-  const selectedField = sessionStorage.getItem("selectedField") || "name";
+  const selectedField = sessionStorage.getItem("selectedField") ;
+
 
   return (
     <div
@@ -54,7 +55,7 @@ function NameQuestionNode({ data, selected, id, updateUserName }) {
           {userData ? (
             <div className="py-2">
               <p className="font-semibold text-sm text-gray-700 mt-2">
-                Enter {selectedField}:
+                {data.label === "Start" || "questionnamenode" ? "Enter Your Name" : data.label}
               </p>
               <div className="relative w-full">
                 <input
@@ -62,7 +63,7 @@ function NameQuestionNode({ data, selected, id, updateUserName }) {
                   className="border my-1 border-gray-300 rounded-lg p-2 bg-gray-100 w-full pr-10"
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
-                  placeholder={`Enter Your ${selectedField}...`}
+                  placeholder={`Enter Your ${selectedField || "Name"}...`}
                 />
                 <button
                   className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gey-700 bg-slate-400 p-2 rounded-full hover:bg-green-600"
@@ -89,8 +90,11 @@ function NameQuestionNode({ data, selected, id, updateUserName }) {
         id="b"
         type="source"
         position={Position.Right}
-        className="w-1 rounded-full bg-gray-500"
-      />
+        className="custom-handle p-2" 
+      >
+                <span className="handle-icon">+</span>
+
+      </Handle>
     </div>
   );
 }
