@@ -2,6 +2,7 @@ import React from "react";
 import { Handle, Position, useReactFlow } from "reactflow";
 import { Trash2, MessageCircle } from "lucide-react";
 import Data from "@/app/data/data";
+import Image from 'next/image';
 
 function TextMediaNode({ data, selected, id }) {
   const { deleteElements } = useReactFlow();
@@ -51,9 +52,11 @@ function TextMediaNode({ data, selected, id }) {
         {data.image && (
           <div className="py-2 relative">
             <p className="font-bold">Send Image</p>
-            <img
+            <Image
               src={data.image}
               alt="Node"
+              width={500}
+                height={300}
               className="w-full h-auto rounded-md mt-2"
             />
 

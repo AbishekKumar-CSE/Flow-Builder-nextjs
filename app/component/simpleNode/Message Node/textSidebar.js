@@ -6,7 +6,7 @@ import { X, ChevronLeft, Edit, List, ArrowLeft } from "lucide-react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
-export default function textSidebar({
+export default function TextSidebar({
   dataUserId,
   nodeName,
   setNodeName,

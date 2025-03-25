@@ -5,6 +5,7 @@ import { Handle, Position, useReactFlow } from "reactflow";
 import Link from "next/link";
 import { Trash2, Camera } from "lucide-react";
 import Data from "@/app/data/data";
+import Image from 'next/image';
 
 function TextNode({ data, selected, id }) {
   const { deleteElements } = useReactFlow();
@@ -75,9 +76,11 @@ function TextNode({ data, selected, id }) {
           {data.image && (
             <div className="py-2 relative">
               <p className="font-bold">Send Image</p>
-              <img
+              <Image
                 src={data.image}
                 alt="Node"
+                width={500}
+                height={300}
                 className="w-full h-auto rounded-md mt-2"
               />
               <Handle

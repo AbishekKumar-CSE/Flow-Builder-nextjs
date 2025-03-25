@@ -6,6 +6,8 @@ import { X, ChevronLeft, Edit, List, ArrowLeft } from "lucide-react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import Modal from "react-modal";
+import Image from 'next/image';
+
 
 export default function Sidebar({
   dataUserId,
@@ -261,9 +263,11 @@ export default function Sidebar({
                 onChange={(e) => handleFileChange(e, "image")}
               />
               {nodeImage && (
-                <img
+                <Image
                   src={nodeImage}
                   alt="Uploaded"
+                  width={500}
+                height={300}
                   className="w-full h-24 object-cover mt-2"
                 />
               )}

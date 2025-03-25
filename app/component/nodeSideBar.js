@@ -1,4 +1,4 @@
-"use client";
+// "use client";
 
 import {
   MessageSquareText,
@@ -32,16 +32,22 @@ export default function Sidebar() {
     }
   }, []);
 
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   const nodes = [
     {
       name: "Text Node",
       type: "questionnode",
-      icon: <FileText className="w-4 h-4" />,
+      icon: <FileText className="w-4 h-4" alt="icon" />,
     },
     {
       name: "Text Media Node",
       type: "textmedianode",
-      icon: <Image className="w-4 h-4" />,
+      icon: <Image className="w-4 h-4" alt="icon" />,
     },
     {
       name: "Ask for Name",
@@ -51,7 +57,7 @@ export default function Sidebar() {
     {
       name: "Media Node",
       type: "textnode",
-      icon: <Image className="w-4 h-4" />,
+      icon: <Image className="w-4 h-4" alt="icon" />,
     },
     {
       name: "Advanced Node",
@@ -70,6 +76,8 @@ export default function Sidebar() {
   );
 
   return (
+
+
     <aside
       className={`border-r max-h-screen overflow-y-auto  p-5 text-sm w-64 h-screen shadow-md flex flex-col justify-between transition-all duration-300 ${
         isDarkMode
@@ -77,6 +85,8 @@ export default function Sidebar() {
           : "bg-white border-gray-700 text-gray-900"
       }`}
     >
+
+      { isClient &&
       <div>
         <h3
           className={`text-xl mb-6 font-bold ${
@@ -150,7 +160,7 @@ export default function Sidebar() {
                 }
                 draggable
               >
-                <Image className="w-4 h-4" /> Text Media Node
+                <Image className="w-4 h-4" alt="icon" /> Text Media Node
               </div>
             </details>
 
@@ -238,7 +248,7 @@ export default function Sidebar() {
                 }
                 draggable
               >
-                <Image className="w-4 h-4" /> Media Node
+                <Image className="w-4 h-4" alt="icon" /> Media Node
               </div>
             </details>
 
@@ -284,7 +294,7 @@ export default function Sidebar() {
 
       </div>
 
-      {/* Raw Data Button */}
+      }
       <div
         className="p-3 border rounded-lg cursor-pointer flex justify-center items-center hover:bg-red-500 hover:text-white transition-all duration-200 gap-2 shadow-lg"
         onClick={() => window.open("/chatBot", "_blank")}
@@ -292,6 +302,7 @@ export default function Sidebar() {
         <Database className="w-5 h-5" />
         <p>Raw Data</p>
       </div>
+      
     </aside>
   );
 }
