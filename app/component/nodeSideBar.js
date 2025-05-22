@@ -78,9 +78,9 @@ export default function Sidebar() {
     node.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  useEffect(() => {
-    setBotData(localStorage.getItem("flow-key"));
-  });
+  // useEffect(() => {
+  //   setBotData(localStorage.getItem("flow-key"));
+  // });
 
   // const downloadRawData = () => {
   //   const isString = typeof botData === "string";

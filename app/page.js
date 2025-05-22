@@ -78,6 +78,12 @@ const initialNodes = [
 
 let id = 0;
 
+import dynamic from 'next/dynamic';
+
+const NodeSideBar = dynamic(() => import('./component/nodeSideBar.js'), {
+  ssr: false, // ✅ This disables server-side rendering for this component
+});
+
 // Function for generating unique IDs for nodes
 const getId = () => `node_${id++}`;
 
