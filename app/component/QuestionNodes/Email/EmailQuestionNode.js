@@ -92,7 +92,7 @@ function EmailQuestionNode({ data, selected, id, updateUserName }) {
             position={Position.Right}
             className="custom-handle p-2" 
           >
-                    <span className="handle-icon">+</span>
+          <span className="handle-icon">+</span>
     
           </Handle>
     </div>

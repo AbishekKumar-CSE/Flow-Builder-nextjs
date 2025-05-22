@@ -1,62 +1,49 @@
 import React from "react";
 import { Handle, Position, useReactFlow } from "reactflow";
-import { Trash2, MessageCircle } from "lucide-react";
+import { Trash2, Handshake } from "lucide-react";
 import Data from "@/app/data/data";
 
 function TextNode({ data, selected, id }) {
   const { deleteElements } = useReactFlow();
   const dataList = Data.data;
 
-  // const userDataId = dataList.userId
-  const preUseID = sessionStorage.getItem("id") || 1
-
-  const userDataId = preUseID - 1
-
-  // Find specific user by ID (if data.userId is provided)
+  const preUseID = sessionStorage.getItem("id") || 1;
+  const userDataId = preUseID - 1;
   const userData = dataList.userId
     ? dataList.find((user) => user.id === userDataId)
-    : dataList[userDataId]; // Default to the first user if no ID is given
+    : dataList[userDataId];
 
-  // Function to replace placeholders with actual values
   const formatLabel = (label) => {
     return label.replace(/\{(\s*\w+\s*)\}/g, (match, key) => {
-      const trimmedKey = key.trim(); // Remove extra spaces
-      return userData?.[trimmedKey] || match; // Replace if key exists, else keep placeholder
+      const trimmedKey = key.trim();
+      return userData?.[trimmedKey] || match;
     });
   };
 
   return (
     <div
-    className={`w-64 shadow-lg rounded-lg bg-white transition-all duration-200 ${
-      selected ? "border-2 border-indigo-500 scale-105" : "border border-gray-200"
-    }`}
-  >
-    <div className="flex flex-col">
-      {/* Header */}
-      <div className="px-3 py-2 text-left text-white text-xs font-semibold rounded-t-lg bg-gradient-to-r from-blue-500 to-indigo-500 flex justify-between items-center">
-        <span className="flex items-center gap-1"><MessageCircle size={14} className="opacity-90" /> Message Node</span>
+      className={`w-40 h-48 text-center shadow-md rounded-xl bg-[#EC9072] relative transition-all duration-200 flex flex-col justify-center items-center ${
+        selected ? "scale-105 ring-2 ring-white" : ""
+      }`}
+    >
+      <button
+        onClick={() => deleteElements({ nodes: [{ id }] })}
+        className="absolute top-2 right-2 text-white hover:text-red-500 transition-transform transform hover:scale-110 z-10"
+      >
+        <Trash2 size={16} />
+      </button>
+
+      <div className="flex flex-col justify-center items-center space-y-2">
+        <Handshake size={26} className="text-white" />
+        <p className="text-white text-sm font-semibold">Select Template</p>
+
         <button
-          onClick={() => deleteElements({ nodes: [{ id }] || 1 })}
-          className="text-white hover:text-red-500 transition-transform transform hover:scale-110"
+          className="text-[#EC9072] bg-white px-4 py-1 rounded-full text-xs font-medium hover:scale-105 transition"
+          onClick={() => alert("Configure clicked")}
         >
-          <Trash2 size={16} />
+          Configure
         </button>
       </div>
-
-      {/* Content */}
-      <div className="px-4 py-3 text-xs text-black">
-        {data.label && userData ? (
-          <div className="py-2">
-            <p className="font-semibold text-sm text-gray-700 mb-1">Send Message</p>
-            <p className="border border-gray-300 rounded-lg p-2 bg-gray-100">
-              {formatLabel(data.label === "questionnode" ? "Welcome to { company }" : data.label)}
-            </p>
-          </div>
-        ) : (
-          <p className="text-gray-500 italic">Loading...</p>
-        )}
-      </div>
-    </div>
 
       <Handle
         id="a"
@@ -64,15 +51,15 @@ function TextNode({ data, selected, id }) {
         position={Position.Left}
         className="w-1 rounded-full bg-slate-500"
       />
-           <Handle
-             id="b"
-             type="source"
-             position={Position.Right}
-             className="custom-handle p-2" 
-           >
-                     <span className="handle-icon">+</span>
-     
-           </Handle>
+          <Handle
+            id="b"
+            type="source"
+            position={Position.Right}
+            className="custom-handle p-2" 
+          >
+                    <span className="handle-icon">+</span>
+    
+          </Handle>
     </div>
   );
 }

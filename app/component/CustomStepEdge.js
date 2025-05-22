@@ -6,7 +6,7 @@ const CustomStepEdge = ({ id, sourceX, sourceY, targetX, targetY }) => {
         sourceY,
         targetX,
         targetY,
-        borderRadius: 20, // Increase for smoother curves
+        borderRadius: 20, 
     });
 
     return (
@@ -35,7 +35,7 @@ const CustomStepEdge = ({ id, sourceX, sourceY, targetX, targetY }) => {
     strokeLinecap="round"
     strokeLinejoin="round"
     markerEnd="url(#arrow)"
-    pointerEvents="none" // Ensure the stroke remains on top
+    pointerEvents="none" 
 />
 
         </>

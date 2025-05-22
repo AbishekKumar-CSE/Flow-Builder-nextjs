@@ -45,11 +45,21 @@ import EmailSidebar from "./component/QuestionNodes/Email/EmailSidebar.js";
 import AskQuestionNode from "./component/QuestionNodes/Question/AskQuestionNode.js";
 import AskSidebar from "./component/QuestionNodes/Question/AskSidebar.js";
 
+import TimeNode from "./component/timeNode/TimeNode.js";
+import TimeSidebar from "./component/timeNode/Timesidebar.js";
+
+import TriggerNode from "./component/triggerNode/TriggerNode.js";
+import TriggerSidebar from "./component/triggerNode/TriggerSidebar.js";
+
 import ListButtonNode from "./component/advanceNode/listButtons/ListButtonNode.js";
 import ListButtonSidebar from "./component/advanceNode/listButtons/ListButtonSidebar.js";
 import { Plus, X } from "lucide-react";
 import { motion } from "framer-motion";
 import Data from "./data/data.js";
+
+import CryptoJS from "crypto-js";
+
+const SECRET_KEY = "48962874218962874213689687";
 
 // Key for local storage
 const flowKey = "flow-key";
@@ -60,13 +70,11 @@ const dataUserId = Data.data.map((user) => user.id);
 const initialNodes = [
   {
     id: "1",
-    type: "questionnamenode",
+    type: "triggernode",
     data: { label: "Start" },
     position: { x: 250, y: 5 },
   },
 ];
-
-
 
 let id = 0;
 
@@ -86,86 +94,89 @@ const App = () => {
       emailquestionnode: EmailQuestionNode,
       askquestionnode: AskQuestionNode,
       listbuttonnodde: ListButtonNode,
+      timenode: TimeNode,
+      triggernode: TriggerNode,
     }),
     []
   );
 
   // States and hooks setup
-  const reactFlowWrapper = useRef(null);
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-  const [reactFlowInstance, setReactFlowInstance] = useState(null);
-  const [selectedElements, setSelectedElements] = useState([]);
-  const [nodeName, setNodeName] = useState("");
-  const [nodeImage, setNodeImage] = useState("");
-  const [nodeLink, setNodeLink] = useState("");
-  const [nodeOption, setNodeOption] = useState("");
-  const [nodeVideo, setNodeVideo] = useState("");
-  const [nodeAudio, setNodeAudio] = useState("");
-  const [nodeFile, setNodeFile] = useState("");
-  const [nodeCta, setNodeCta] = useState("");
-  const [nodeCtaButton, setNodeCtaButton] = useState("");
-  const [nodeButton1, setNodeButton1] = useState("");
-  const [nodeButton2, setNodeButton2] = useState("");
-  const [nodeButton3, setNodeButton3] = useState("");
-  const [nodeFooter1, setNodeFooter1] = useState("");
-  const [nodeFooter2, setNodeFooter2] = useState("");
-  const [nodeFooter3, setNodeFooter3] = useState("");
-  const [nodeButtons, setNodeButtons] = useState([]);
-  const [nodeList, setNodeList] = useState([]);
+  // const reactFlowWrapper = useRef(null);
+  // const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  // const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  // const [reactFlowInstance, setReactFlowInstance] = useState(null);
+  // const [selectedElements, setSelectedElements] = useState([]);
+  // const [nodeName, setNodeName] = useState("");
+  // const [nodeImage, setNodeImage] = useState("");
+  // const [nodeLink, setNodeLink] = useState("");
+  // const [nodeOption, setNodeOption] = useState("");
+  // const [nodeVideo, setNodeVideo] = useState("");
+  // const [nodeAudio, setNodeAudio] = useState("");
+  // const [nodeFile, setNodeFile] = useState("");
+  // const [nodeCta, setNodeCta] = useState("");
+  // const [nodeCtaButton, setNodeCtaButton] = useState("");
+  // const [nodeButton1, setNodeButton1] = useState("");
+  // const [nodeButton2, setNodeButton2] = useState("");
+  // const [nodeButton3, setNodeButton3] = useState("");
+  // const [nodeFooter1, setNodeFooter1] = useState("");
+  // const [nodeFooter2, setNodeFooter2] = useState("");
+  // const [nodeFooter3, setNodeFooter3] = useState("");
+  // const [nodeButtons, setNodeButtons] = useState([]);
+  // const [nodeList, setNodeList] = useState([]);
 
-
-  // Update nodes data when nodeName or selectedElements changes
   // useEffect(() => {
-  //   setShowSidebar(false);
-
   //   if (selectedElements.length > 0) {
   //     setNodes((nds) =>
-  //       nds.map((node) => {
-  //         if (node.id === selectedElements[0]?.id) {
-  //           node.data = {
-  //             ...node.data,
-  //             label: nodeName,
-  //           };
-  //         }
-  //         return node;
-  //       })
+  //       nds.map((node) =>
+  //         node.id === selectedElements[0]?.id
+  //           ? {
+  //               ...node,
+  //               data: {
+  //                 ...node.data,
+  //                 label: nodeName,
+  //                 image: nodeImage,
+  //                 link: nodeLink,
+  //                 video: nodeVideo,
+  //                 audio: nodeAudio,
+  //                 file: nodeFile,
+  //                 cta: nodeCta,
+  //                 ctabutton: nodeCtaButton,
+  //                 buttons: nodeButtons,
+  //                 list: nodeList,
+  //                 button1: nodeButton1,
+  //                 button2: nodeButton2,
+  //                 button3: nodeButton3,
+  //                 footer1: nodeFooter1,
+  //                 footer2: nodeFooter2,
+  //                 footer3: nodeFooter3,
+  //               },
+  //             }
+  //           : node
+  //       )
   //     );
-  //   } else {
-  //     setNodeName("");
   //   }
-  // }, [nodeName, selectedElements, setNodes]);
-
+  // }, [
+  //   nodeName,
+  //   nodeImage,
+  //   nodeLink,
+  //   nodeVideo,
+  //   nodeAudio,
+  //   nodeFile,
+  //   nodeCta,
+  //   nodeCtaButton,
+  //   nodeButtons,
+  //   nodeList,
+  //   nodeButton1,
+  //   nodeButton2,
+  //   nodeButton3,
+  //   nodeFooter1,
+  //   nodeFooter2,
+  //   nodeFooter3,
+  //   selectedElements,
+  // ]);
 
   // useEffect(() => {
-  //   if (selectedElements.length > 0) {
-  //     setNodes((nds) =>
-  //       nds.map((node) => {
-  //         if (node.id === selectedElements[0]?.id) {
-  //           node.data = {
-  //             ...node.data,
-  //             label: nodeName,
-  //             image: nodeImage,
-  //             link: nodeLink,
-  //             video: nodeVideo,
-  //             audio: nodeAudio,
-  //             file: nodeFile,
-  //             cta: nodeCta,
-  //             ctabutton: nodeCtaButton,
-  //             buttons: nodeButtons,
-  //             list: nodeList,
-  //             button1: nodeButton1,
-  //             button2: nodeButton2,
-  //             button3: nodeButton3,
-  //             footer1: nodeFooter1,
-  //             footer2: nodeFooter2,
-  //             footer3: nodeFooter3,
-  //           };
-  //         }
-  //         return node;
-  //       })
-  //     );
-  //   } else {
+  //   if (selectedElements.length === 0) {
   //     setNodeName("");
   //     setNodeImage("");
   //     setNodeLink("");
@@ -184,26 +195,82 @@ const App = () => {
   //     setNodeFooter2("");
   //     setNodeFooter3("");
   //   }
-  // }, [
-  //   // selectedElements
-  //   nodeName,
-  //   nodeImage,
-  //   nodeLink,
-  //   nodeVideo,
-  //   selectedElements,
-  //   nodeCta,
-  //   nodeCtaButton,
-  //   nodeButtons,
-  //   nodeList,
-  //   nodeButton1,
-  //   nodeButton2,
-  //   nodeButton3,
-  //   nodeFooter1,
-  //   nodeFooter2,
-  //   nodeFooter3,
-  //   setNodes,
-  // ]);
+  // }, [selectedElements]);
 
+  // const onNodeClick = useCallback((_event, node) => {
+  //   setSelectedElements([node]);
+  //   setNodeName(node.data.label || "");
+  //   setNodeImage(node.data.image || "");
+  //   setNodeVideo(node.data.video || "");
+  //   setNodeAudio(node.data.audio || "");
+  //   setNodeFile(node.data.file || "");
+  //   setNodeCta(node.data.cta || "");
+  //   setNodeCtaButton(node.data.ctabutton || "");
+  //   setNodeButtons(node.data.buttons || []);
+  //   setNodeList(node.data.list || []);
+  //   setNodeButton1(node.data.nodebutton1 || "");
+  //   setNodeButton2(node.data.nodebutton2 || "");
+  //   setNodeButton3(node.data.nodebutton3 || "");
+  //   setNodeFooter1(node.data.nodefooter1 || "");
+  //   setNodeFooter2(node.data.nodefooter2 || "");
+  //   setNodeFooter3(node.data.nodefooter3 || "");
+  //   node.data.link || "";
+
+  //   setNodes((nodes) =>
+  //     nodes.map((n) => ({
+  //       ...n,
+  //       selected: n.id === node.id,
+  //     }))
+  //   );
+  // }, []);
+
+  // States and hooks setup
+  const reactFlowWrapper = useRef(null);
+
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [reactFlowInstance, setReactFlowInstance] = useState(null);
+  const [selectedElements, setSelectedElements] = useState([]);
+
+  const [title, setTitle] = useState("");
+
+  const [nodeName, setNodeName] = useState("");
+  const [nodeImage, setNodeImage] = useState("");
+  const [nodeLink, setNodeLink] = useState("");
+  const [nodeOption, setNodeOption] = useState("");
+  const [nodeVideo, setNodeVideo] = useState("");
+  const [nodeAudio, setNodeAudio] = useState("");
+  const [nodeFile, setNodeFile] = useState("");
+  const [nodeCta, setNodeCta] = useState("");
+  const [nodeCtaButton, setNodeCtaButton] = useState("");
+  const [nodeButton1, setNodeButton1] = useState("");
+  const [nodeButton2, setNodeButton2] = useState("");
+  const [nodeButton3, setNodeButton3] = useState("");
+  const [nodeFooter1, setNodeFooter1] = useState("");
+  const [nodeFooter2, setNodeFooter2] = useState("");
+  const [nodeFooter3, setNodeFooter3] = useState("");
+  const [nodeButtons, setNodeButtons] = useState([]);
+  const [nodeList, setNodeList] = useState([]);
+
+  // **Added missing scheduling-related states**
+  const [waitTime, setWaitTime] = useState(2);
+  const [waitUnit, setWaitUnit] = useState("Hours");
+  const [resumeOption, setResumeOption] = useState("immediately");
+  const [startTime, setStartTime] = useState("09:00");
+  const [endTime, setEndTime] = useState("17:00");
+  const [days, setDays] = useState({
+    SUN: false,
+    MON: false,
+    TUE: false,
+    WED: false,
+    THU: false,
+    FRI: false,
+    SAT: false,
+  });
+
+  const [triggerName, setTriggerName] = useState("Trigger Node");
+
+  // Update node data when any of the input states change
   useEffect(() => {
     if (selectedElements.length > 0) {
       setNodes((nds) =>
@@ -213,6 +280,7 @@ const App = () => {
                 ...node,
                 data: {
                   ...node.data,
+                  title: title,
                   label: nodeName,
                   image: nodeImage,
                   link: nodeLink,
@@ -229,6 +297,13 @@ const App = () => {
                   footer1: nodeFooter1,
                   footer2: nodeFooter2,
                   footer3: nodeFooter3,
+                  waitTime,
+                  waitUnit,
+                  resumeOption,
+                  startTime,
+                  endTime,
+                  days,
+                  triggerName,
                 },
               }
             : node
@@ -236,6 +311,7 @@ const App = () => {
       );
     }
   }, [
+    title,
     nodeName,
     nodeImage,
     nodeLink,
@@ -252,11 +328,20 @@ const App = () => {
     nodeFooter1,
     nodeFooter2,
     nodeFooter3,
+    waitTime,
+    waitUnit,
+    resumeOption,
+    startTime,
+    endTime,
+    days,
     selectedElements,
+    triggerName,
   ]);
-  
+
+  // Reset states on node deselection
   useEffect(() => {
     if (selectedElements.length === 0) {
+      setTitle("");
       setNodeName("");
       setNodeImage("");
       setNodeLink("");
@@ -274,12 +359,29 @@ const App = () => {
       setNodeFooter1("");
       setNodeFooter2("");
       setNodeFooter3("");
+      setTriggerName("");
+      // Reset scheduling data
+      setWaitTime("2");
+      setWaitUnit("Hours");
+      setResumeOption("immediately");
+      setStartTime("09:00");
+      setEndTime("17:00");
+      setDays({
+        SUN: false,
+        MON: false,
+        TUE: false,
+        WED: false,
+        THU: false,
+        FRI: false,
+        SAT: false,
+      });
     }
   }, [selectedElements]);
-  
 
+  // When a node is clicked
   const onNodeClick = useCallback((_event, node) => {
     setSelectedElements([node]);
+    setTitle(node.data.title || "Abondoned Flow");
     setNodeName(node.data.label || "");
     setNodeImage(node.data.image || "");
     setNodeVideo(node.data.video || "");
@@ -295,7 +397,25 @@ const App = () => {
     setNodeFooter1(node.data.nodefooter1 || "");
     setNodeFooter2(node.data.nodefooter2 || "");
     setNodeFooter3(node.data.nodefooter3 || "");
-    node.data.link || "";
+    setNodeLink(node.data.link || "");
+    setTriggerName(node.data.triggerName || "");
+    // Set scheduling data from node.data
+    setWaitTime(node.data.waitTime || "2");
+    setWaitUnit(node.data.waitUnit || "Hours");
+    setResumeOption(node.data.resumeOption || "immediately");
+    setStartTime(node.data.startTime || "09:00");
+    setEndTime(node.data.endTime || "17:00");
+    setDays(
+      node.data.days || {
+        SUN: false,
+        MON: false,
+        TUE: false,
+        WED: false,
+        THU: false,
+        FRI: false,
+        SAT: false,
+      }
+    );
 
     setNodes((nodes) =>
       nodes.map((n) => ({
@@ -332,11 +452,32 @@ const App = () => {
   }, [nodes, edges]);
 
   // Save flow to local storage
+  const [decryptedData, setDecryptedData] = useState(null);
+
+  const dataFlowName = JSON.parse(decryptedData);
+
+  const reFetchFlow = useCallback(() => {
+    fetch("https://back.salegrowy.com/campaigns/1")
+      .then((response) => response.text())
+      .then((encryptedResponse) => {
+        try {
+          const bytes = CryptoJS.AES.decrypt(encryptedResponse, SECRET_KEY);
+          const decryptedText = bytes.toString(CryptoJS.enc.Utf8);
+          const parsedData = JSON.parse(decryptedText);
+          setDecryptedData(parsedData.data);
+        } catch (error) {
+          console.error("Decryption error:", error);
+        }
+      })
+      .catch((error) => {
+        console.error("Fetch error:", error);
+      });
+  }, []);
 
   const onSave = useCallback(() => {
     if (reactFlowInstance) {
       const emptyTargetHandles = checkEmptyTargetHandles();
-  
+
       if (nodes.length > 1 && (emptyTargetHandles > 1 || isNodeUnconnected())) {
         Swal.fire({
           icon: "error",
@@ -345,16 +486,94 @@ const App = () => {
         });
       } else {
         const flow = reactFlowInstance.toObject();
-        localStorage.setItem(flowKey, JSON.stringify(flow));
-        Swal.fire({
-          icon: "success",
-          title: "Success",
-          text: "Save successful!",
-        });
+
+        const payload = {
+          vendors__id: 1,
+          // flow_name: "abandoned_cart",
+          flow_name: `${dataFlowName.title}`,
+          flow_json: flow,
+        };
+
+        fetch("https://back.salegrowy.com/campaigns/1", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            data: JSON.stringify(payload),
+          }),
+        })
+          .then((res) => res.text())
+          .then((encryptedResponse) => {
+            updateFlow(flow);
+            try {
+              const bytes = CryptoJS.AES.decrypt(encryptedResponse, SECRET_KEY);
+              const decryptedText = bytes.toString(CryptoJS.enc.Utf8);
+              console.log("PUT response decrypted:", decryptedText);
+            } catch (error) {
+              console.error("Error decrypting PUT response:", error);
+            }
+
+            localStorage.setItem(flowKey, JSON.stringify(flow));
+
+            Swal.fire({
+              icon: "success",
+              title: "Success",
+              text: "Save successful!",
+            });
+
+            reFetchFlow();
+          })
+          .catch((error) => {
+            console.error("PUT error:", error);
+          });
       }
     }
-  }, [reactFlowInstance, nodes, isNodeUnconnected]);
-  
+  }, [reactFlowInstance, nodes, isNodeUnconnected, reFetchFlow]);
+
+  console.log(dataFlowName, "a;hsfiuhkifu");
+
+  const updateFlow = async (flow) => {
+    const payload = {
+      vendors__id: 1,
+      // flow_name: "cod_confirm",
+      flow_name: `${dataFlowName.title}`,
+      flow_json: flow,
+    };
+
+    fetch("https://back.salegrowy.com/automation/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE0OCwiZW1haWwiOiJha2RldmVsb3BlcnM3NEBnbWFpbC5jb20iLCJpYXQiOjE3NDc3MzQxNTh9.zTPqi6qfp1DkJZanb3w8iFy944Yk3xisxbrii213gPU`,
+      },
+      body: JSON.stringify(payload),
+    });
+  };
+
+  useEffect(() => {
+    reFetchFlow();
+  }, [reFetchFlow]);
+
+  useEffect(() => {
+    if (decryptedData) {
+      try {
+        const jsonData =
+          typeof decryptedData === "string"
+            ? JSON.parse(decryptedData)
+            : decryptedData;
+
+        const { x = 0, y = 0, zoom = 1 } = jsonData?.json?.viewport || {};
+        setNodes(jsonData?.json?.nodes || []);
+        setEdges(jsonData?.json?.edges || []);
+        setViewport({ x, y, zoom });
+      } catch (error) {
+        console.error("Invalid JSON data:", error);
+      }
+    }
+  }, [decryptedData]);
+
+  console.log(decryptedData, "Decrypted data");
 
   // Restore flow from local storage
   const onRestore = useCallback(() => {
@@ -376,30 +595,17 @@ const App = () => {
     const timeout = setTimeout(() => {
       setViewport({ x: 10, y: 90, zoom: 0.89 }); // Adjust zoom level
     }, 0); // Increased delay for React Flow readiness
-  
+
     return () => clearTimeout(timeout);
   }, [setViewport]); // Ensure it runs after mounting
-  
-
-  // Handle edge connection
-  // const onConnect = useCallback(
-  //   (params) => {
-  //     console.log("Edge created: ", params);
-  //     setEdges((eds) => addEdge(params, eds));
-  //   },
-  //   [setEdges]
-  // );
 
   const onConnect = useCallback(
     (params) => {
       console.log("Edge created: ", params);
-      setEdges((eds) =>
-        addEdge({ ...params, type: "step" }, eds) // Force straight edges
-      );
+      setEdges((eds) => addEdge({ ...params, type: "step" }, eds));
     },
     [setEdges]
   );
-  
 
   // Enable drop effect on drag over
   const onDragOver = useCallback((event) => {
@@ -463,11 +669,12 @@ const App = () => {
     fitView({ padding: 0.5 }); // Adjust padding as needed
   }, []);
 
-  
   return (
     <div className="flex flex-row min-h-screen lg:flex-row">
       {showSidebar && (
         <NodeSideBar
+          title={title}
+          setTitle={setTitle}
           nodeName={nodeName}
           setNodeName={setNodeName}
           nodeImage={nodeImage}
@@ -489,15 +696,15 @@ const App = () => {
           selectedNode={selectedElements[0]}
           setSelectedElements={setSelectedElements}
         />
-      ) } 
+      )}
 
       <div className="flex-grow h-screen" ref={reactFlowWrapper}>
         <ReactFlow
-        //  defaultZoom={0.80}
+          //  defaultZoom={0.80}
           nodes={nodes}
           nodeTypes={nodeTypes}
           edges={edges}
-          edgeTypes={edgeTypes} 
+          edgeTypes={edgeTypes}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
@@ -527,12 +734,7 @@ const App = () => {
               whileHover={{ scale: 1.1 }}
               onClick={onMenuShow}
             >
-              {showSidebar ? 
-                <X size={16} />
-                :
-                <Plus size={16} />
-            }
-              
+              {showSidebar ? <X size={16} /> : <Plus size={16} />}
             </motion.button>
             <button
               className="m-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
@@ -590,10 +792,10 @@ const App = () => {
           selectedNode={selectedElements[0]}
           setSelectedElements={setSelectedElements}
         />
-      )  : selectedElements[0]?.type === "questionnamenode" ? (
+      ) : selectedElements[0]?.type === "questionnamenode" ? (
         <NameSidebar
-        dataUserId={userData.map((user) => user.id)}
-        updateUserName={updateUserName}
+          dataUserId={userData.map((user) => user.id)}
+          updateUserName={updateUserName}
           nodeName={nodeName}
           setNodeName={setNodeName}
           nodeLink={nodeLink}
@@ -607,12 +809,10 @@ const App = () => {
           selectedNode={selectedElements[0]}
           setSelectedElements={setSelectedElements}
         />
-      ) 
-
-      : selectedElements[0]?.type === "phonequestionnode" ? (
+      ) : selectedElements[0]?.type === "phonequestionnode" ? (
         <PhoneSidebar
-        dataUserId={userData.map((user) => user.id)}
-        updateUserName={updateUserName}
+          dataUserId={userData.map((user) => user.id)}
+          updateUserName={updateUserName}
           nodeName={nodeName}
           setNodeName={setNodeName}
           nodeLink={nodeLink}
@@ -626,11 +826,10 @@ const App = () => {
           selectedNode={selectedElements[0]}
           setSelectedElements={setSelectedElements}
         />
-      ) 
-      : selectedElements[0]?.type === "emailquestionnode" ? (
+      ) : selectedElements[0]?.type === "emailquestionnode" ? (
         <EmailSidebar
-        dataUserId={userData.map((user) => user.id)}
-        updateUserName={updateUserName}
+          dataUserId={userData.map((user) => user.id)}
+          updateUserName={updateUserName}
           nodeName={nodeName}
           setNodeName={setNodeName}
           nodeLink={nodeLink}
@@ -644,11 +843,10 @@ const App = () => {
           selectedNode={selectedElements[0]}
           setSelectedElements={setSelectedElements}
         />
-      ) 
-      : selectedElements[0]?.type === "askquestionnode" ? (
+      ) : selectedElements[0]?.type === "askquestionnode" ? (
         <AskSidebar
-        dataUserId={userData.map((user) => user.id)}
-        updateUserName={updateUserName}
+          dataUserId={userData.map((user) => user.id)}
+          updateUserName={updateUserName}
           nodeName={nodeName}
           setNodeName={setNodeName}
           nodeLink={nodeLink}
@@ -662,10 +860,9 @@ const App = () => {
           selectedNode={selectedElements[0]}
           setSelectedElements={setSelectedElements}
         />
-      ) 
-      : selectedElements[0]?.type === "listbuttonnodde" ? (
+      ) : selectedElements[0]?.type === "listbuttonnodde" ? (
         <ListButtonSidebar
-        dataUserId={dataUserId}
+          dataUserId={dataUserId}
           nodeName={nodeName}
           setNodeName={setNodeName}
           nodeImage={nodeImage}
@@ -701,33 +898,108 @@ const App = () => {
           selectedNode={selectedElements[0]}
           setSelectedElements={setSelectedElements}
         />
-      ) 
-      : selectedElements[0]?.type === "textmedianode" ? (
+      ) : selectedElements[0]?.type === "textmedianode" ? (
         <TextMediaSidebar
-        dataUserId={dataUserId}
-        nodeName={nodeName}
-        setNodeName={setNodeName}
-        nodeImage={nodeImage}
-        setNodeImage={setNodeImage}
-        nodeVideo={nodeVideo}
-        setNodeVideo={setNodeVideo}
-        nodeAudio={nodeAudio}
-        setNodeAudio={setNodeAudio}
-        nodeFile={nodeFile}
-        setNodeFile={setNodeFile}
-        nodeLink={nodeLink}
-        setNodeLink={setNodeLink}
-        nodeFooter1={nodeFooter1}
-        setNodeFooter1={setNodeFooter1}
-        nodeFooter2={nodeFooter2}
-        setNodeFooter2={setNodeFooter2}
-        nodeFooter3={nodeFooter3}
-        setNodeFooter3={setNodeFooter3}
-        selectedNode={selectedElements[0]}
-        setSelectedElements={setSelectedElements}
+          dataUserId={dataUserId}
+          nodeName={nodeName}
+          setNodeName={setNodeName}
+          nodeImage={nodeImage}
+          setNodeImage={setNodeImage}
+          nodeVideo={nodeVideo}
+          setNodeVideo={setNodeVideo}
+          nodeAudio={nodeAudio}
+          setNodeAudio={setNodeAudio}
+          nodeFile={nodeFile}
+          setNodeFile={setNodeFile}
+          nodeLink={nodeLink}
+          setNodeLink={setNodeLink}
+          nodeFooter1={nodeFooter1}
+          setNodeFooter1={setNodeFooter1}
+          nodeFooter2={nodeFooter2}
+          setNodeFooter2={setNodeFooter2}
+          nodeFooter3={nodeFooter3}
+          setNodeFooter3={setNodeFooter3}
+          selectedNode={selectedElements[0]}
+          setSelectedElements={setSelectedElements}
         />
-      ) 
-      : (
+      ) : selectedElements[0]?.type === "timenode" ? (
+        <TimeSidebar
+          dataUserId={dataUserId}
+          nodeName={nodeName}
+          setNodeName={setNodeName}
+          nodeImage={nodeImage}
+          setNodeImage={setNodeImage}
+          nodeVideo={nodeVideo}
+          setNodeVideo={setNodeVideo}
+          nodeAudio={nodeAudio}
+          setNodeAudio={setNodeAudio}
+          nodeFile={nodeFile}
+          setNodeFile={setNodeFile}
+          nodeLink={nodeLink}
+          setNodeLink={setNodeLink}
+          nodeFooter1={nodeFooter1}
+          setNodeFooter1={setNodeFooter1}
+          nodeFooter2={nodeFooter2}
+          setNodeFooter2={setNodeFooter2}
+          nodeFooter3={nodeFooter3}
+          setNodeFooter3={setNodeFooter3}
+          selectedNode={selectedElements[0]}
+          setSelectedElements={setSelectedElements}
+          setNodes={setNodes}
+          // NEW scheduling props
+          waitTime={waitTime} // <-- Add this
+          setWaitTime={setWaitTime}
+          waitUnit={waitUnit}
+          setWaitUnit={setWaitUnit}
+          resumeOption={resumeOption}
+          setResumeOption={setResumeOption}
+          startTime={startTime}
+          setStartTime={setStartTime}
+          endTime={endTime}
+          setEndTime={setEndTime}
+          days={days}
+          setDays={setDays}
+        />
+      ) : selectedElements[0]?.type === "triggernode" ? (
+        <TriggerSidebar
+          dataUserId={dataUserId}
+          nodeName={nodeName}
+          setNodeName={setNodeName}
+          nodeImage={nodeImage}
+          setNodeImage={setNodeImage}
+          nodeVideo={nodeVideo}
+          setNodeVideo={setNodeVideo}
+          nodeAudio={nodeAudio}
+          setNodeAudio={setNodeAudio}
+          nodeFile={nodeFile}
+          setNodeFile={setNodeFile}
+          nodeLink={nodeLink}
+          setNodeLink={setNodeLink}
+          nodeFooter1={nodeFooter1}
+          setNodeFooter1={setNodeFooter1}
+          nodeFooter2={nodeFooter2}
+          setNodeFooter2={setNodeFooter2}
+          nodeFooter3={nodeFooter3}
+          setNodeFooter3={setNodeFooter3}
+          selectedNode={selectedElements[0]}
+          setSelectedElements={setSelectedElements}
+          setNodes={setNodes}
+          // NEW scheduling props
+          waitTime={waitTime} // <-- Add this
+          setWaitTime={setWaitTime}
+          waitUnit={waitUnit}
+          setWaitUnit={setWaitUnit}
+          resumeOption={resumeOption}
+          setResumeOption={setResumeOption}
+          startTime={startTime}
+          setStartTime={setStartTime}
+          endTime={endTime}
+          setEndTime={setEndTime}
+          days={days}
+          setDays={setDays}
+          onTriggerSelect={(label) => setTriggerName(label)}
+        />
+      ) : (
         <AdvanceSideBar
           dataUserId={dataUserId}
           nodeName={nodeName}

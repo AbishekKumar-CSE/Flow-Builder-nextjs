@@ -12,6 +12,7 @@
   "dependencies": {
     "@reduxjs/toolkit": "^2.6.1",
     "autoprefixer": "10.4.14",
+    "crypto-js": "^4.2.0",
     "eslint": "8.40.0",
     "eslint-config-next": "13.4.2",
     "framer-motion": "^12.5.0",
@@ -20,15 +21,16 @@
     "postcss": "8.4.23",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-icons": "^5.5.0",
     "react-modal": "^3.16.3",
     "react-quill": "^2.0.0",
     "react-redux": "^9.2.0",
     "reactflow": "^11.7.1",
     "sweetalert2": "^11.17.2",
-    "tailwindcss": "3.3.2"
+    "tailwindcss": "3.3.2",
+    "uuid": "^11.1.0"
   },
   "description": "![](https://github.com/AbishekKumar-CSE/Flow-Builder-nextjs.git)\r This project is a simple React application built with [React Flow](https://reactflow.dev/) and next.js . It demonstrates the implementation of drag and drop nodes with the ability to connect them. The state of the nodes and their connections can be saved and restored.",
-  "devDependencies": {},
   "keywords": [],
   "author": "",
   "license": "ISC"
