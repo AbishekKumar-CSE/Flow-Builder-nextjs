@@ -82,22 +82,23 @@ export default function Sidebar() {
     setBotData(localStorage.getItem("flow-key"));
   });
 
-  const downloadRawData = () => {
-    const isString = typeof botData === "string";
-    const jsonString = isString
-      ? JSON.stringify(JSON.parse(botData), null, 2) // pretty-print parsed string
-      : JSON.stringify(botData, null, 2); // pretty-print object
+  // const downloadRawData = () => {
+  //   const isString = typeof botData === "string";
+  //   const jsonString = isString
+  //     ? JSON.stringify(JSON.parse(botData), null, 2) // pretty-print parsed string
+  //     : JSON.stringify(botData, null, 2); // pretty-print object
 
-    const blob = new Blob([jsonString], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
+  //   const blob = new Blob([jsonString], { type: "application/json" });
+  //   const url = URL.createObjectURL(blob);
 
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "CartFlowData.json";
-    a.click();
+  //   const a = document.createElement("a");
+    
+  //   a.href = url;
+  //   a.download = "CartFlowData.json";
+  //   a.click();
 
-    URL.revokeObjectURL(url);
-  };
+  //   URL.revokeObjectURL(url);
+  // };
 
   //   function downloadRawData() {
   //   const file = new Blob([JSON.stringify(botData, null, 2)], {
@@ -246,7 +247,7 @@ export default function Sidebar() {
       )}
       <div
         className="p-3 border rounded-lg cursor-pointer flex justify-center items-center hover:bg-red-500 hover:text-white transition-all duration-200 gap-2 shadow-lg"
-        onClick={downloadRawData}
+        // onClick={downloadRawData}
       >
         <Database className="w-5 h-5" />
         <p>Raw Data</p>
