@@ -1,11 +1,14 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Handle, Position, useReactFlow } from "reactflow";
+import { useRouter } from "next/navigation";
 import { Trash2, Handshake } from "lucide-react";
 import Data from "@/app/data/data";
 
 function TextNode({ data, selected, id }) {
   const { deleteElements } = useReactFlow();
+
   const dataList = Data.data;
+  const router = useRouter()
 
   const preUseID = sessionStorage.getItem("id") || 1;
   const userDataId = preUseID - 1;
@@ -18,6 +21,10 @@ function TextNode({ data, selected, id }) {
       const trimmedKey = key.trim();
       return userData?.[trimmedKey] || match;
     });
+  };
+
+  const handleTemplateSelect = () => {
+    // router.push('/model')
   };
 
   return (
@@ -39,7 +46,7 @@ function TextNode({ data, selected, id }) {
 
         <button
           className="text-[#EC9072] bg-white px-4 py-1 rounded-full text-xs font-medium hover:scale-105 transition"
-          onClick={() => alert("Configure clicked")}
+          onClick={handleTemplateSelect}
         >
           Configure
         </button>
@@ -51,15 +58,14 @@ function TextNode({ data, selected, id }) {
         position={Position.Left}
         className="w-1 rounded-full bg-slate-500"
       />
-          <Handle
-            id="b"
-            type="source"
-            position={Position.Right}
-            className="custom-handle p-2" 
-          >
-                    <span className="handle-icon">+</span>
-    
-          </Handle>
+      <Handle
+        id="b"
+        type="source"
+        position={Position.Right}
+        className="custom-handle p-2"
+      >
+        <span className="handle-icon">+</span>
+      </Handle>
     </div>
   );
 }
