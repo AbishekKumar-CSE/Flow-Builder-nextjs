@@ -29,11 +29,11 @@ export default function Sidebar() {
   const [isOpen3, setIsOpen3] = useState(false);
   const [botData, setBotData] = useState(null);
 
-  useEffect(() => {
-    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-      setIsDarkMode(true);
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+  //     setIsDarkMode(true);
+  //   }
+  // }, []);
 
   const [isClient, setIsClient] = useState(false);
 
