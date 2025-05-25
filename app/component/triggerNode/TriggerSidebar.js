@@ -62,7 +62,10 @@ export default function TriggerSidebar({
         </button>
       </div>
 
-      <div className="grid grid-cols-3 gap-3">
+        <h3 className="text-lg text-black">Trigger Selected</h3>
+
+
+      {/* <div className="grid grid-cols-3 gap-3">
         {triggers.map(({ label, icon: Icon }) => (
           <button
             key={label}
@@ -75,7 +78,7 @@ export default function TriggerSidebar({
             <span className="text-center">{label}</span>
           </button>
         ))}
-      </div>
+      </div> */}
     </aside>
   );
 }

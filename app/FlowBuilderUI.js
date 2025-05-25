@@ -82,6 +82,7 @@ let id = 0;
 const getId = () => `node_${id++}`;
 
 const App = () => {
+  const token = process.env.NEXT_PUBLIC_JWT_TOKEN;
   // Define custom node types
   const nodeTypes = useMemo(
     () => ({
@@ -100,6 +101,8 @@ const App = () => {
     []
   );
 
+  const base_url = process.env.NEXT_PUBLIC_BASE_URL;
+  const vendorId = process.env.NEXT_PUBLIC_VENDOR_ID;
   // States and hooks setup
   const reactFlowWrapper = useRef(null);
 
@@ -144,9 +147,29 @@ const App = () => {
     SAT: false,
   });
 
-  const [templateData, setTemplateData] = useState()
-
+  const [templateData, setTemplateData] = useState();
+  const [templateParams, setTemplateParams] = useState({});
+  const [templateId, setTemplateId] = useState();
   const [triggerName, setTriggerName] = useState("Trigger Node");
+  const [message, setMessage] = useState(null);
+  const [receivedVendorId, setRecievedVendorId] = useState()
+
+  useEffect(() => {
+    setRecievedVendorId(parseInt(message))
+  }, [message])
+
+
+  useEffect(() => {
+    const fetchMessage = async () => {
+      const res = await fetch("http://localhost:3001/api/message");
+      const data = await res.json();
+      setMessage(data.message?.message || "No message yet");
+    };
+
+    fetchMessage();
+  }, []);
+
+  console.log(message, "Message of the 3000 finally received");
 
   // Update node data when any of the input states change
   useEffect(() => {
@@ -175,6 +198,8 @@ const App = () => {
                   footer1: nodeFooter1,
                   footer2: nodeFooter2,
                   footer3: nodeFooter3,
+                  templateParams: templateParams,
+                  templateId: templateId,
                   // templateData: templateData,
                   waitTime,
                   waitUnit,
@@ -207,6 +232,8 @@ const App = () => {
     nodeFooter1,
     nodeFooter2,
     nodeFooter3,
+    templateParams,
+    templateId,
     // templateData,
     waitTime,
     waitUnit,
@@ -238,6 +265,8 @@ const App = () => {
       setNodeButton3("");
       setNodeFooter1("");
       setNodeFooter2("");
+      setTemplateParams({});
+      setTemplateId();
       setNodeFooter3("");
       setTriggerName("");
       // Reset scheduling data
@@ -277,6 +306,8 @@ const App = () => {
     setNodeButton3(node.data.nodebutton3 || "");
     setNodeFooter1(node.data.nodefooter1 || "");
     setNodeFooter2(node.data.nodefooter2 || "");
+    setTemplateParams(node.data.templateParams || []);
+    setTemplateId(node.data.templateId || null);
     setNodeFooter3(node.data.nodefooter3 || "");
     setNodeLink(node.data.link || "");
     setTriggerName(node.data.triggerName || "");
@@ -339,7 +370,7 @@ const App = () => {
   const dataFlowName = JSON.parse(decryptedData);
 
   const reFetchFlow = useCallback(() => {
-    fetch("https://back.salegrowy.com/campaigns/1")
+    fetch(`${base_url}campaigns/${receivedVendorId}`)
       .then((response) => response.text())
       .then((encryptedResponse) => {
         try {
@@ -370,13 +401,15 @@ const App = () => {
         const flow = reactFlowInstance.toObject();
 
         const payload = {
-          vendors__id: 1,
+          vendors__id: receivedVendorId,
           // flow_name: "abandoned_cart",
-          flow_name: `${dataFlowName.title}`,
+          flow_name: `${dataFlowName?.title}`,
           flow_json: flow,
         };
 
-        fetch("https://back.salegrowy.com/campaigns/1", {
+        console.log(payload, "Payload Of create flow");
+
+        fetch(`${base_url}campaigns/${receivedVendorId}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -408,29 +441,31 @@ const App = () => {
           })
           .catch((error) => {
             console.error("PUT error:", error);
-          })
+          });
       }
     }
   }, [reactFlowInstance, nodes, isNodeUnconnected, reFetchFlow]);
 
-  console.log(dataFlowName, "a;hsfiuhkifu");
+  console.log(dataFlowName, "Flow Data Home UI");
 
   const updateFlow = async (flow) => {
+    const temData = localStorage.getItem("templateData");
+    const jsonTempData = JSON.parse(temData);
     const payload = {
-      vendors__id: 1,
+      vendors__id: receivedVendorId,
       // flow_name: "cod_confirm",
-      flow_name: `${dataFlowName.title}`,
+      flow_name: `${dataFlowName?.title}`,
       flow_json: flow,
-      template_data: templateData,
+      template_data: jsonTempData,
     };
 
-    console.log(payload, "Payload")
+    console.log(payload, "Payload");
 
-    fetch("https://back.salegrowy.com/automation/create", {
+    fetch(`${base_url}automation/create`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE0OCwiZW1haWwiOiJha2RldmVsb3BlcnM3NEBnbWFpbC5jb20iLCJpYXQiOjE3NDc3MzQxNTh9.zTPqi6qfp1DkJZanb3w8iFy944Yk3xisxbrii213gPU`,
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(payload),
     });
@@ -438,7 +473,6 @@ const App = () => {
 
   useEffect(() => {
     reFetchFlow();
-    onRestore()
   }, [reFetchFlow]);
 
   useEffect(() => {
@@ -475,7 +509,7 @@ const App = () => {
     };
 
     restoreFlow();
-  }, [setNodes, setViewport, onSave]);
+  }, [setNodes, setViewport, onSave, reFetchFlow]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -555,7 +589,7 @@ const App = () => {
     fitView({ padding: 0.5 }); // Adjust padding as needed
   }, []);
 
-  console.log(templateData, 'Template data from the Home')
+  console.log(templateData, "Template data from the Home");
 
   return (
     <div className="flex flex-row min-h-screen lg:flex-row">
@@ -681,6 +715,10 @@ const App = () => {
           setSelectedElements={setSelectedElements}
           setTemplateData={setTemplateData}
           templateData={templateData}
+          setTemplateParams={setTemplateParams}
+          templateParams={templateParams}
+          setTemplateId={setTemplateId}
+          templateId={templateId}
         />
       ) : selectedElements[0]?.type === "questionnamenode" ? (
         <NameSidebar

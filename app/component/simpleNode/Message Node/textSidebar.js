@@ -20,14 +20,20 @@ export default function TextSidebar({
   setSelectedElements,
   setTemplateData,
   templateData,
+  templateParams,
+  setTemplateParams,
+  setTemplateId,
+  templateId,
 }) {
   const [templateName, setTemplateName] = useState("");
   const [templateData1, setTemplateData1] = useState(null);
-  const [templateParams, setTemplateParams] = useState({});
+  // const [templateParams, setTemplateParams] = useState({});
   const [decryptedData, setDecryptedData] = useState([]);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [columnData, setColumnData] = useState([]);
   const [parseTemplateData, setParseTemplateData] = useState();
+  const base_url = process.env.NEXT_PUBLIC_BASE_URL;
+  const vendorId = process.env.NEXT_PUBLIC_VENDOR_ID;
 
   useEffect(() => {
     if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
@@ -51,7 +57,7 @@ export default function TextSidebar({
   const fetchTemplateData = () => {
     const token = process.env.NEXT_PUBLIC_JWT_TOKEN;
     fetch(
-      "https://back.salegrowy.com/template/template?page=1&limit=1000&vendorId=1",
+      `${base_url}template/template?page=1&limit=1000&vendorId=${vendorId}`,
       {
         method: "GET",
         headers: {
@@ -77,6 +83,8 @@ export default function TextSidebar({
   };
 
   const handleSelectChange = (e) => {
+    const selectedTemplate = JSON.parse(e.target.value);
+    setTemplateId(selectedTemplate.id);
     const value = e.target.value;
     try {
       const templateObj = JSON.parse(value);
@@ -111,6 +119,9 @@ export default function TextSidebar({
       setParseTemplateData(null);
     }
   };
+
+  console.log(templateParams, "template Params");
+  console.log(templateId, "template ID");
 
   const extractTemplateParameters = (components) => {
     const parameters = new Set();
@@ -158,7 +169,7 @@ export default function TextSidebar({
   console.log(templateParams, "ParameterData");
   const fetchColumnData = () => {
     const token = process.env.NEXT_PUBLIC_JWT_TOKEN;
-    fetch("https://back.salegrowy.com/Template/columns", {
+    fetch(`${base_url}Template/columns`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -205,25 +216,25 @@ export default function TextSidebar({
     return url.replace(/{{(\d+)}}/g, (_, idx) => example?.[idx - 1] || "");
   };
 
-// In your useEffect that sets templateData
-useEffect(() => {
-  if (parseTemplateData) {
-    const payload = {
-      data: parseTemplateData,
-      params: templateParams,
-    };
-    setTemplateData(payload);
-    localStorage.setItem('templateData', JSON.stringify(payload));
-  }
-}, [parseTemplateData, templateParams, setTemplateData]);
+  // In your useEffect that sets templateData
+  useEffect(() => {
+    if (parseTemplateData) {
+      const payload = {
+        data: parseTemplateData,
+        params: templateParams,
+      };
+      // setTemplateData(payload);
+      localStorage.setItem("templateData", JSON.stringify(payload));
+    }
+  }, [parseTemplateData, templateParams, setTemplateData]);
 
-  console.log(templateData, "Bla Bla Bla")
+  console.log(templateData, "Bla Bla Bla");
 
   return (
     <>
       {selectedNode && (
         <aside
-          className={`border-r p-5 text-sm w-[50%] h-screen shadow-md transition-all duration-300 flex flex-col ${
+          className={`border-r p-5 text-sm w-[30%] h-screen shadow-md transition-all duration-300 flex flex-col ${
             isDarkMode
               ? "bg-white border-gray-700 text-gray-900"
               : "bg-white border-gray-700 text-gray-900"
@@ -279,15 +290,6 @@ useEffect(() => {
                       <label className="block text-sm font-medium mb-1">
                         Value for {`{{${param}}}`}:
                       </label>
-                      {/* <input
-                        type="text"
-                        className="w-full border border-gray-300 rounded-md p-2"
-                        value={templateParams[param]}
-                        onChange={(e) =>
-                          handleParamChange(param, e.target.value)
-                        }
-                        placeholder={`Enter value for {{${param}}}`}
-                      /> */}
                       <select
                         className="block w-full border border-gray-300 rounded-md p-2 mb-4"
                         value={templateParams[param] || ""}
