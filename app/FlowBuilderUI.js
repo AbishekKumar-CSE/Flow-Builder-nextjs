@@ -398,6 +398,7 @@ const App = () => {
           text: "More than one node has an empty target handle or there are unconnected nodes.",
         });
       } else {
+        
         const flow = reactFlowInstance.toObject();
 
         const payload = {
