@@ -24,10 +24,10 @@ export default function TextSidebar({
   setTemplateParams,
   setTemplateId,
   templateId,
+  templateName,
+  setTemplateName,
 }) {
-  const [templateName, setTemplateName] = useState("");
   const [templateData1, setTemplateData1] = useState(null);
-  // const [templateParams, setTemplateParams] = useState({});
   const [decryptedData, setDecryptedData] = useState([]);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [columnData, setColumnData] = useState([]);
@@ -43,16 +43,16 @@ export default function TextSidebar({
     fetchColumnData();
   }, []);
 
-  // Update template data whenever parseTemplateData or templateParams changes
   useEffect(() => {
-    if (parseTemplateData) {
+    if (parseTemplateData && Array.isArray(templateParams)) {
       const payload = {
         data: parseTemplateData,
         params: templateParams,
       };
       setTemplateData(payload);
+      localStorage.setItem("templateData", JSON.stringify(payload));
     }
-  }, [parseTemplateData, templateParams, setTemplateData]);
+  }, [parseTemplateData, templateParams]);
 
   const fetchTemplateData = () => {
     const token = process.env.NEXT_PUBLIC_JWT_TOKEN;
@@ -66,32 +66,102 @@ export default function TextSidebar({
         },
       }
     )
-      .then((response) => response.text())
+      .then((res) => res.text())
       .then((encryptedResponse) => {
-        try {
-          const bytes = CryptoJS.AES.decrypt(encryptedResponse, SECRET_KEY);
-          const decryptedText = bytes.toString(CryptoJS.enc.Utf8);
-          const parsedData = JSON.parse(decryptedText);
-          setDecryptedData(parsedData.data);
-        } catch (error) {
-          console.error("Decryption error:", error);
-        }
+        const bytes = CryptoJS.AES.decrypt(encryptedResponse, SECRET_KEY);
+        const decryptedText = bytes.toString(CryptoJS.enc.Utf8);
+        const parsedData = JSON.parse(decryptedText);
+        setDecryptedData(parsedData.data);
       })
-      .catch((error) => {
-        console.error("Fetch error:", error);
+      .catch(console.error);
+  };
+
+  const fetchColumnData = () => {
+    const token = process.env.NEXT_PUBLIC_JWT_TOKEN;
+    fetch(`${base_url}Template/columns`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.text())
+      .then((encryptedResponse) => {
+        const bytes = CryptoJS.AES.decrypt(encryptedResponse, SECRET_KEY);
+        const decryptedText = bytes.toString(CryptoJS.enc.Utf8);
+        const parsedData = JSON.parse(decryptedText);
+        setColumnData(parsedData.columns);
+      })
+      .catch(console.error);
+  };
+
+  useEffect(() => {
+    if (decryptedData.length > 0 && templateId) {
+      const selectedTemplate = decryptedData.find((t) => t.id === templateId);
+      if (selectedTemplate) {
+        setTemplateName(selectedTemplate.templateName);
+
+        try {
+          const parsedData = JSON.parse(selectedTemplate.data);
+          setParseTemplateData(parsedData);
+
+          let components = [];
+          if (parsedData.template?.components) {
+            components = parsedData.template.components;
+          } else if (parsedData.components) {
+            components = parsedData.components;
+          } else if (Array.isArray(parsedData)) {
+            components = parsedData;
+          }
+
+          setTemplateData1(components);
+
+          const params = extractTemplateParameters(components);
+          const formattedParams = params.map((param) => ({
+            value: param,
+            name: "",
+          }));
+          setTemplateParams(formattedParams);
+        } catch (err) {
+          console.error("Parse error:", err);
+        }
+      }
+    }
+  }, [decryptedData, templateId]);
+
+  const extractTemplateParameters = (components) => {
+    const parameters = new Set();
+    components.forEach((component) => {
+      const allText = [
+        component.text,
+        ...(component.buttons || []).map((btn) => btn.text),
+      ];
+      allText.forEach((text) => {
+        if (text) {
+          const matches = text.match(/\{\{\s*(\d+)\s*\}\}/g);
+          matches?.forEach((match) => {
+            parameters.add(match.replace(/\D/g, ""));
+          });
+        }
       });
+    });
+    return Array.from(parameters).sort((a, b) => a - b);
+  };
+
+  const handleParamChange = (paramValue, newName) => {
+    setTemplateParams((prevParams) =>
+      prevParams.map((item) =>
+        item.value === paramValue ? { ...item, name: newName } : item
+      )
+    );
   };
 
   const handleSelectChange = (e) => {
     const selectedTemplate = JSON.parse(e.target.value);
     setTemplateId(selectedTemplate.id);
-    const value = e.target.value;
-    try {
-      const templateObj = JSON.parse(value);
-      const templateJsonData = templateObj.data;
-      setTemplateName(templateObj.templateName);
 
-      const parsedData = JSON.parse(templateJsonData);
+    try {
+      const parsedData = JSON.parse(selectedTemplate.data);
       setParseTemplateData(parsedData);
 
       let components = [];
@@ -103,98 +173,22 @@ export default function TextSidebar({
         components = parsedData;
       }
 
+      setTemplateName(selectedTemplate.templateName);
       setTemplateData1(components);
 
       const params = extractTemplateParameters(components);
-      const initialParams = {};
-      params.forEach((param) => {
-        initialParams[param] = "";
-      });
-      setTemplateParams(initialParams);
-    } catch (error) {
-      console.error("Error parsing template:", error);
+      const formattedParams = params.map((param) => ({
+        value: param,
+        name: "",
+      }));
+      setTemplateParams(formattedParams);
+    } catch (err) {
+      console.error("Template parsing error:", err);
       setTemplateName("");
-      setTemplateData1(null);
-      setTemplateParams({});
+      setTemplateParams([]);
       setParseTemplateData(null);
     }
   };
-
-  console.log(templateParams, "template Params");
-  console.log(templateId, "template ID");
-
-  const extractTemplateParameters = (components) => {
-    const parameters = new Set();
-
-    if (Array.isArray(components)) {
-      components.forEach((component) => {
-        // Check component text
-        if (component.text) {
-          const matches = component.text.match(/\{\{\s*(\d+)\s*\}\}/g);
-          if (matches) {
-            matches.forEach((match) => {
-              const paramNum = match.replace(/\D/g, "");
-              parameters.add(paramNum);
-            });
-          }
-        }
-
-        // Check buttons if they exist
-        if (component.buttons && Array.isArray(component.buttons)) {
-          component.buttons.forEach((button) => {
-            if (button.text) {
-              const matches = button.text.match(/\{\{\s*(\d+)\s*\}\}/g);
-              if (matches) {
-                matches.forEach((match) => {
-                  const paramNum = match.replace(/\D/g, "");
-                  parameters.add(paramNum);
-                });
-              }
-            }
-          });
-        }
-      });
-    }
-
-    return Array.from(parameters).sort((a, b) => a - b);
-  };
-
-  const handleParamChange = (param, value) => {
-    setTemplateParams((prev) => ({
-      ...prev,
-      [param]: value,
-    }));
-  };
-
-  console.log(templateParams, "ParameterData");
-  const fetchColumnData = () => {
-    const token = process.env.NEXT_PUBLIC_JWT_TOKEN;
-    fetch(`${base_url}Template/columns`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => response.text())
-      .then((encryptedResponse) => {
-        try {
-          const bytes = CryptoJS.AES.decrypt(encryptedResponse, SECRET_KEY);
-          const decryptedText = bytes.toString(CryptoJS.enc.Utf8);
-          const parsedData = JSON.parse(decryptedText);
-          setColumnData(parsedData.columns);
-        } catch (error) {
-          console.error("Decryption error:", error);
-        }
-      })
-      .catch((error) => {
-        console.error("Fetch error:", error);
-      });
-  };
-
-  useEffect(() => {
-    fetchColumnData();
-  }, []);
 
   // ---------------- Template Preview -----------------------
 
@@ -219,16 +213,24 @@ export default function TextSidebar({
   // In your useEffect that sets templateData
   useEffect(() => {
     if (parseTemplateData) {
+      const formattedParams = Object.entries(templateParams).map(
+        ([key, value]) => ({
+          value: key,
+          name: value,
+        })
+      );
+
       const payload = {
         data: parseTemplateData,
         params: templateParams,
       };
-      // setTemplateData(payload);
+
       localStorage.setItem("templateData", JSON.stringify(payload));
     }
-  }, [parseTemplateData, templateParams, setTemplateData]);
+  }, [parseTemplateData, templateParams]);
 
-  console.log(templateData, "Bla Bla Bla");
+  console.log(templateName, "Bla Bla Bla");
+  console.log(templateParams, "template Params");
 
   return (
     <>
@@ -265,13 +267,13 @@ export default function TextSidebar({
             <select
               className="block w-full border border-gray-300 rounded-md p-2 mb-4"
               onChange={handleSelectChange}
-              defaultValue=""
+              value={templateId || ""}
             >
               <option value="" disabled>
                 Select a template
               </option>
               {decryptedData.map((template) => (
-                <option key={template.id} value={JSON.stringify(template)}>
+                <option key={template.id} value={template.id}>
                   {template.templateName}
                 </option>
               ))}
@@ -282,19 +284,19 @@ export default function TextSidebar({
           {templateData1 && (
             <div className="mt-4">
               <h4 className="font-medium mb-2">Template Parameters:</h4>
-              {Object.keys(templateParams).length > 0 ? (
-                Object.keys(templateParams)
-                  .sort((a, b) => a - b)
+              {templateParams.length > 0 ? (
+                templateParams
+                  .sort((a, b) => a.value - b.value)
                   .map((param) => (
-                    <div key={param} className="mb-3">
+                    <div key={param.value} className="mb-3">
                       <label className="block text-sm font-medium mb-1">
-                        Value for {`{{${param}}}`}:
+                        Value for {`{{${param.value}}}`}:
                       </label>
                       <select
                         className="block w-full border border-gray-300 rounded-md p-2 mb-4"
-                        value={templateParams[param] || ""}
+                        value={param.name || ""}
                         onChange={(e) =>
-                          handleParamChange(param, e.target.value)
+                          handleParamChange(param.value, e.target.value)
                         }
                       >
                         <option value="" disabled>

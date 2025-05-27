@@ -150,14 +150,14 @@ const App = () => {
   const [templateData, setTemplateData] = useState();
   const [templateParams, setTemplateParams] = useState({});
   const [templateId, setTemplateId] = useState();
+  const [templateName, setTemplateName] = useState("");
   const [triggerName, setTriggerName] = useState("Trigger Node");
   const [message, setMessage] = useState(null);
-  const [receivedVendorId, setRecievedVendorId] = useState()
+  const [receivedVendorId, setRecievedVendorId] = useState();
 
   useEffect(() => {
-    setRecievedVendorId(parseInt(message))
-  }, [message])
-
+    setRecievedVendorId(parseInt(message));
+  }, [message]);
 
   useEffect(() => {
     const fetchMessage = async () => {
@@ -200,6 +200,7 @@ const App = () => {
                   footer3: nodeFooter3,
                   templateParams: templateParams,
                   templateId: templateId,
+                  templateName: templateName,
                   // templateData: templateData,
                   waitTime,
                   waitUnit,
@@ -234,6 +235,7 @@ const App = () => {
     nodeFooter3,
     templateParams,
     templateId,
+    templateName,
     // templateData,
     waitTime,
     waitUnit,
@@ -267,6 +269,7 @@ const App = () => {
       setNodeFooter2("");
       setTemplateParams({});
       setTemplateId();
+      setTemplateName("");
       setNodeFooter3("");
       setTriggerName("");
       // Reset scheduling data
@@ -308,6 +311,7 @@ const App = () => {
     setNodeFooter2(node.data.nodefooter2 || "");
     setTemplateParams(node.data.templateParams || []);
     setTemplateId(node.data.templateId || null);
+    setTemplateName(node.data.templateName || null);
     setNodeFooter3(node.data.nodefooter3 || "");
     setNodeLink(node.data.link || "");
     setTriggerName(node.data.triggerName || "");
@@ -372,20 +376,22 @@ const App = () => {
   const reFetchFlow = useCallback(() => {
     fetch(`${base_url}campaigns/${receivedVendorId}`)
       .then((response) => response.text())
-      .then((encryptedResponse) => {
+      .then((responseText) => {
         try {
-          const bytes = CryptoJS.AES.decrypt(encryptedResponse, SECRET_KEY);
+          const bytes = CryptoJS.AES.decrypt(responseText, SECRET_KEY);
           const decryptedText = bytes.toString(CryptoJS.enc.Utf8);
           const parsedData = JSON.parse(decryptedText);
+          console.log("Decrypted response:", parsedData);
           setDecryptedData(parsedData.data);
         } catch (error) {
           console.error("Decryption error:", error);
+          console.error("Raw response:", responseText);
         }
       })
       .catch((error) => {
         console.error("Fetch error:", error);
       });
-  }, []);
+  }, [receivedVendorId]);
 
   const onSave = useCallback(() => {
     if (reactFlowInstance) {
@@ -398,7 +404,6 @@ const App = () => {
           text: "More than one node has an empty target handle or there are unconnected nodes.",
         });
       } else {
-        
         const flow = reactFlowInstance.toObject();
 
         const payload = {
@@ -431,11 +436,15 @@ const App = () => {
             }
 
             localStorage.setItem(flowKey, JSON.stringify(flow));
-
             Swal.fire({
               icon: "success",
               title: "Success",
               text: "Save successful!",
+              confirmButtonText: "OK",
+              confirmButtonColor: "#3085d6", // Blue color
+              showCancelButton: false,
+            }).then((result) => {
+              if (result.isConfirmed) onRestore();
             });
 
             reFetchFlow();
@@ -720,6 +729,8 @@ const App = () => {
           templateParams={templateParams}
           setTemplateId={setTemplateId}
           templateId={templateId}
+          setTemplateName={setTemplateName}
+          templateName={templateName}
         />
       ) : selectedElements[0]?.type === "questionnamenode" ? (
         <NameSidebar

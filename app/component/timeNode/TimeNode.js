@@ -4,6 +4,7 @@ import { Trash2, Clock3, ChevronDown } from "lucide-react";
 
 function TimeNode({ data, selected, id }) {
   const { deleteElements } = useReactFlow();
+  console.log("TimeNode data:", data);
 
   return (
     <div
@@ -23,7 +24,7 @@ function TimeNode({ data, selected, id }) {
       {/* Label */}
       <div>
         <p className="text-sm font-semibold mt-2">Wait</p>
-        <p className="text-xs opacity-90">{data?.duration || "2 hours"}</p>
+        <p className="text-xs opacity-90">{data?.waitTime || "2 "} Hrs</p>
       </div>
 
       {/* 3 Dots */}

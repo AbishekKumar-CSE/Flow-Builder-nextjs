@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { X, Edit } from "lucide-react";
+import Swal from 'sweetalert2';
 
 export default function TimeSidebar({
   waitTime,
@@ -70,6 +71,15 @@ export default function TimeSidebar({
 
   const handleSave = () => {
     const selectedDays = Object.keys(days).filter((d) => days[d]);
+  setTimeout(() => {
+  Swal.fire({
+    icon: 'success',
+    title: 'Saved!',
+    text: 'Saved settings successfully!',
+    timer: 2000,
+    showConfirmButton: false
+  });
+}, 500);
 
     const updatePayload = {
       waitTime,
@@ -207,12 +217,12 @@ export default function TimeSidebar({
 
       {/* Action Buttons */}
       <div className="mt-4 flex justify-end gap-2">
-        <button
+        {/* <button
           className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400"
           onClick={handleCancel}
         >
           Cancel
-        </button>
+        </button> */}
         <button
           className="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600"
           onClick={handleSave}

@@ -27,6 +27,8 @@ function TextNode({ data, selected, id }) {
     // router.push('/model')
   };
 
+  console.log("TextNode data:", data);
+
   return (
     <div
       className={`w-40 h-48 text-center shadow-md rounded-xl bg-[#EC9072] relative transition-all duration-200 flex flex-col justify-center items-center ${
