@@ -161,7 +161,7 @@ const App = () => {
 
   useEffect(() => {
     const fetchMessage = async () => {
-      const res = await fetch("http://localhost:3001/api/message");
+      const res = await fetch("https://flow-builder-nextjs.vercel.app/api/message");
       const data = await res.json();
       setMessage(data.message?.message || "No message yet");
     };

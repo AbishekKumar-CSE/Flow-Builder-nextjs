@@ -12,8 +12,8 @@ export async function POST(request) {
     return new Response(JSON.stringify({ success: true }), {
       status: 200,
       headers: {
-        "Access-Control-Allow-Origin": "http://localhost:3000",
-        // "Access-Control-Allow-Origin": "https://front.salegrowy.com",
+        // "Access-Control-Allow-Origin": "http://localhost:3000",
+        "Access-Control-Allow-Origin": "https://front.salegrowy.com",
         "Content-Type": "application/json",
       },
     });
@@ -29,8 +29,8 @@ export async function OPTIONS() {
   return new Response(null, {
     status: 200,
     headers: {
-      "Access-Control-Allow-Origin": "http://localhost:3000",
-      // "Access-Control-Allow-Origin": "https://front.salegrowy.com",
+      // "Access-Control-Allow-Origin": "http://localhost:3000",
+      "Access-Control-Allow-Origin": "https://front.salegrowy.com",
       "Access-Control-Allow-Methods": "POST, OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type",
     },
