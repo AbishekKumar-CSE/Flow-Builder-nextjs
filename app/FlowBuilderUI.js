@@ -159,17 +159,23 @@ const App = () => {
     setRecievedVendorId(parseInt(message));
   }, [message]);
 
-  useEffect(() => {
-    const fetchMessage = async () => {
-      const res = await fetch("https://flow-builder-nextjs.vercel.app/api/message");
-      const data = await res.json();
-      setMessage(data.message?.message || "No message yet");
-    };
-
+ useEffect(() => {
+    async function fetchMessage() {
+      try {
+        // const res = await fetch("http://localhost:3001/api/message");
+        const res = await fetch("https://flow-builder-nextjs.vercel.app/api/message");
+        const data = await res.json();
+        setMessage(data.message || "No message yet");
+      } catch (error) {
+        console.error("Failed to fetch message:", error);
+      }
+    }
     fetchMessage();
   }, []);
 
-  console.log(message, "Message of the 3000 finally received");
+
+
+  console.log(message, "Message of the front end finally received");
 
   // Update node data when any of the input states change
   useEffect(() => {
