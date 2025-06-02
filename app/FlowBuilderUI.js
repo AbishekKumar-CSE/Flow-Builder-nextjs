@@ -79,7 +79,7 @@ const initialNodes = [
 let id = 0;
 
 // Function for generating unique IDs for nodes
-const getId = () => `node_${id++}`;
+// const getId = () => `node_${id++}`;
 
 const App = () => {
   const token = process.env.NEXT_PUBLIC_JWT_TOKEN;
@@ -153,27 +153,63 @@ const App = () => {
   const [templateName, setTemplateName] = useState("");
   const [triggerName, setTriggerName] = useState("Trigger Node");
   const [message, setMessage] = useState(null);
-  const [receivedVendorId, setRecievedVendorId] = useState();
+  // const [receivedVendorId, setRecievedVendorId] = useState();
+  const [receivedVendorId1, setRecievedVendorId1] = useState();
+  const idCounter = useRef(0);
+const getId = () => {
+  if (nodes.length > 0) {
+    // Get all numeric IDs (both "node_X" and plain numbers)
+    const numericIds = nodes.map(node => {
+      if (node.id.startsWith('node_')) {
+        return parseInt(node.id.replace('node_', ''), 10);
+      }
+      return parseInt(node.id, 10) || 0;
+    });
+    
+    const maxId = Math.max(...numericIds);
+    idCounter.current = maxId + 1;
+  }
+  return `node_${idCounter.current++}`;
+};
 
   useEffect(() => {
-    setRecievedVendorId(parseInt(message));
+  if (nodes.length > 0) {
+    const numericIds = nodes.map(node => {
+      if (node.id.startsWith('node_')) {
+        return parseInt(node.id.replace('node_', ''), 10);
+      }
+      return parseInt(node.id, 10) || 0;
+    });
+    
+    idCounter.current = Math.max(...numericIds) + 1;
+  }
+}, [nodes]);
+
+  useEffect(() => {
+    if (message != null) {
+      const parsedVendorId = message;
+      setRecievedVendorId1(parsedVendorId);
+      localStorage.setItem("vendorIdLocal", parsedVendorId);
+      // setRecievedVendorId(parsedVendorId);
+    }
   }, [message]);
 
- useEffect(() => {
+  console.log(message, "Recieved Message")
+  const receivedVendorId = localStorage.getItem("vendorIdLocal")
+
+  useEffect(() => {
     async function fetchMessage() {
       try {
         // const res = await fetch("http://localhost:3001/api/message");
         const res = await fetch("https://flow-builder-nextjs.vercel.app/api/message");
         const data = await res.json();
-        setMessage(data.message || "No message yet");
+        setMessage(data.message || null);
       } catch (error) {
         console.error("Failed to fetch message:", error);
       }
     }
     fetchMessage();
   }, []);
-
-
 
   console.log(message, "Message of the front end finally received");
 
@@ -380,7 +416,7 @@ const App = () => {
   const dataFlowName = JSON.parse(decryptedData);
 
   const reFetchFlow = useCallback(() => {
-    fetch(`${base_url}campaigns/${receivedVendorId}`)
+    fetch(`${base_url}campaigns/${receivedVendorId}`)  // Get the flow
       .then((response) => response.text())
       .then((responseText) => {
         try {
@@ -388,7 +424,7 @@ const App = () => {
           const decryptedText = bytes.toString(CryptoJS.enc.Utf8);
           const parsedData = JSON.parse(decryptedText);
           console.log("Decrypted response:", parsedData);
-          setDecryptedData(parsedData.data);
+          setDecryptedData(parsedData?.data);
         } catch (error) {
           console.error("Decryption error:", error);
           console.error("Raw response:", responseText);
@@ -460,7 +496,7 @@ const App = () => {
           });
       }
     }
-  }, [reactFlowInstance, nodes, isNodeUnconnected, reFetchFlow]);
+  }, [reactFlowInstance, nodes, edges, isNodeUnconnected, reFetchFlow]);
 
   console.log(dataFlowName, "Flow Data Home UI");
 
@@ -468,7 +504,7 @@ const App = () => {
     const temData = localStorage.getItem("templateData");
     const jsonTempData = JSON.parse(temData);
     const payload = {
-      vendors__id: receivedVendorId,
+      vendors__id: parseInt(receivedVendorId),
       // flow_name: "cod_confirm",
       flow_name: `${dataFlowName?.title}`,
       flow_json: flow,
@@ -489,7 +525,7 @@ const App = () => {
 
   useEffect(() => {
     reFetchFlow();
-  }, [reFetchFlow]);
+  }, []);
 
   useEffect(() => {
     if (decryptedData) {
@@ -525,7 +561,7 @@ const App = () => {
     };
 
     restoreFlow();
-  }, [setNodes, setViewport, onSave, reFetchFlow]);
+  }, [setNodes, setViewport, onSave]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -549,34 +585,35 @@ const App = () => {
     event.dataTransfer.dropEffect = "move";
   }, []);
 
-  // Handle drop event to add a new node
+  // Handle drop event to add a new node 
   const onDrop = useCallback(
-    (event) => {
-      event.preventDefault();
+  (event) => {
+    event.preventDefault();
 
-      const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
-      const type = event.dataTransfer.getData("application/reactflow");
+    const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
+    const type = event.dataTransfer.getData("application/reactflow");
 
-      if (typeof type === "undefined" || !type) {
-        return;
-      }
+    if (typeof type === "undefined" || !type) {
+      return;
+    }
 
-      const position = reactFlowInstance.project({
-        x: event.clientX - reactFlowBounds.left,
-        y: event.clientY - reactFlowBounds.top,
-      });
-      const newNode = {
-        id: getId(),
-        type,
-        position,
-        data: { label: `${type}` },
-      };
+    const position = reactFlowInstance.project({
+      x: event.clientX - reactFlowBounds.left,
+      y: event.clientY - reactFlowBounds.top,
+    });
+    
+    const newNode = {
+      id: getId(), // This will now generate proper unique IDs
+      type,
+      position,
+      data: { label: `${type}` },
+    };
 
-      console.log("Node created: ", newNode);
-      setNodes((nds) => nds.concat(newNode));
-    },
-    [reactFlowInstance]
-  );
+    console.log("Adding new node:", newNode); // Debug log
+    setNodes((nds) => [...nds, newNode]);
+  },
+  [reactFlowInstance, getId]
+);
 
   const rfStyle = {
     backgroundColor: "#111827",
@@ -606,6 +643,7 @@ const App = () => {
   }, []);
 
   console.log(templateData, "Template data from the Home");
+  console.log(edges, "Edges data from the Home");
 
   return (
     <div className="flex flex-row min-h-screen lg:flex-row">
