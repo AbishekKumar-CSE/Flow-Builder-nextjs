@@ -418,6 +418,8 @@ const getId = () => {
 const MySwal = withReactContent(Swal);
 
 useEffect(() => {
+  const hasReloaded = sessionStorage.getItem('hasReloaded');
+
   if (decryptedData === undefined) {
     // Show loader
     MySwal.fire({
@@ -429,8 +431,13 @@ useEffect(() => {
       },
     });
   } else {
-    // Close the loader
-    Swal.close();
+    Swal.close(); // Close the loader
+
+    if (!hasReloaded) {
+      sessionStorage.setItem('hasReloaded', 'true');
+      window.location.reload();
+      return;
+    }
 
     try {
       const dataFlowName = JSON.parse(decryptedData);
