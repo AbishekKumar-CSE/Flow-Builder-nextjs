@@ -20,6 +20,7 @@ import ReactFlow, {
   Background,
 } from "reactflow";
 import Swal from "sweetalert2";
+import withReactContent from 'sweetalert2-react-content';
 import "reactflow/dist/base.css";
 import "../tailwind.config.js";
 import CustomStraightEdge from "./component/CustomStepEdge.js";
@@ -414,10 +415,29 @@ const getId = () => {
   const [decryptedData, setDecryptedData] = useState(null);
   const [dataFlowName, setDataFlowName] = useState();
 
-  useEffect(() => {
-  if(decryptedData != undefined) {
-    const dataFlowName = JSON?.parse(decryptedData);
-    setDataFlowName(dataFlowName)
+const MySwal = withReactContent(Swal);
+
+useEffect(() => {
+  if (decryptedData === undefined) {
+    // Show loader
+    MySwal.fire({
+      title: 'Loading...',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+  } else {
+    // Close the loader
+    Swal.close();
+
+    try {
+      const dataFlowName = JSON.parse(decryptedData);
+      setDataFlowName(dataFlowName);
+    } catch (error) {
+      console.error('Error parsing decryptedData:', error);
+    }
   }
 }, [decryptedData]);
   
