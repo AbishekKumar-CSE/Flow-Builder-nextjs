@@ -57,6 +57,7 @@ import ListButtonSidebar from "./component/advanceNode/listButtons/ListButtonSid
 import { Plus, X } from "lucide-react";
 import { motion } from "framer-motion";
 import Data from "./data/data.js";
+import { useRouter } from "next/navigation";
 
 import CryptoJS from "crypto-js";
 
@@ -84,6 +85,7 @@ let id = 0;
 
 const App = () => {
   const token = process.env.NEXT_PUBLIC_JWT_TOKEN;
+  const router = useRouter();
   // Define custom node types
   const nodeTypes = useMemo(
     () => ({
@@ -418,8 +420,6 @@ const getId = () => {
 const MySwal = withReactContent(Swal);
 
 useEffect(() => {
-  const hasReloaded = sessionStorage.getItem('hasReloaded');
-
   if (decryptedData === undefined) {
     // Show loader
     MySwal.fire({
@@ -430,14 +430,14 @@ useEffect(() => {
         Swal.showLoading();
       },
     });
-  } else {
-    Swal.close(); // Close the loader
 
-    if (!hasReloaded) {
-      sessionStorage.setItem('hasReloaded', 'true');
-      window.location.reload();
-      return;
-    }
+    const timer = setTimeout(() => {
+      window.location.reload(); // fallback in App Router
+    }, 5000);
+
+    return () => clearTimeout(timer); // cleanup timeout on unmount or dependency change
+  } else {
+    Swal.close(); // hide loader
 
     try {
       const dataFlowName = JSON.parse(decryptedData);
