@@ -121,6 +121,7 @@ export default function TextSidebar({
           const formattedParams = params.map((param) => ({
             value: param,
             name: "",
+            isStatic: 1, // Default to static
           }));
           setTemplateParams(formattedParams);
         } catch (err) {
@@ -358,7 +359,7 @@ export default function TextSidebar({
                   backgroundSize: "contain", // or 'auto' if your image is small
                   backgroundBlendMode: "overlay", // subtle blend with background color
                 }}
-              >
+                 >
                 <div className="bg-[#f4f4f4] p-4 rounded-lg max-w-[90%] mx-2 my-2 relative shadow border border-[#e5ddd5]">
                   {components.map((comp, index) => {
                     switch (comp.type) {

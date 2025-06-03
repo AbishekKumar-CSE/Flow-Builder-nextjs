@@ -412,9 +412,15 @@ const getId = () => {
 
   // Save flow to local storage
   const [decryptedData, setDecryptedData] = useState(null);
+  const [dataFlowName, setDataFlowName] = useState();
 
-  const dataFlowName = JSON.parse(decryptedData);
-
+  useEffect(() => {
+  if(decryptedData != undefined) {
+    const dataFlowName = JSON?.parse(decryptedData);
+    setDataFlowName(dataFlowName)
+  }
+}, [decryptedData]);
+  
   const reFetchFlow = useCallback(() => {
     fetch(`${base_url}campaigns/${receivedVendorId}`)  // Get the flow
       .then((response) => response.text())
