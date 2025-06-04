@@ -226,7 +226,7 @@ export default function TextSidebar({
         ([key, value]) => ({
           value: key,
           name: value,
-          isStatic: 1
+          isStatic: 1,
         })
       );
 
@@ -239,8 +239,9 @@ export default function TextSidebar({
     }
   }, [parseTemplateData, templateParams]);
 
-  console.log(templateName, "Bla Bla Bla");
+  console.log(components, "Bla Bla Bla");
   console.log(JSON.stringify(templateParams), "template Params");
+  // {getBodyContent(comp.text, comp.example)}
 
   return (
     <>
@@ -300,55 +301,69 @@ export default function TextSidebar({
               {templateParams.length > 0 &&
                 templateParams
                   .sort((a, b) => a.value - b.value)
-                  .map((param) => (
-                    <div key={param.value} className="mb-3">
-                      <label className="block text-sm font-medium mb-1">
-                        Value for {`{{${param.value}}}`}:
-                      </label>
+                  .map((param) => {
+                    // Extract body params from BODY section
+                    const bodySection = components.find(
+                      (item) => item.type === "BODY"
+                    );
+                    const paramLabel =
+                      bodySection?.example?.body_text?.[0]?.[param.value - 1] ||
+                      "";
 
-                      {/* Dropdown */}
-                      <select
-                        className="block w-full border border-gray-300 rounded-md p-2 mb-2"
-                        value={
-                          param.name &&
-                          Object.keys(columnData).includes(param.name)
-                            ? param.name
-                            : param.isStatic === 0
-                              ? "custom"
-                              : ""
-                        }
-                        onChange={(e) => {
-                          const selected = e.target.value;
-                          if (selected === "custom") {
-                            handleParamChange(param.value, "", 0); // custom input mode
-                          } else {
-                            handleParamChange(param.value, selected, 1); // static dropdown selection
-                          }
-                        }}
-                      >
-                        <option value="">Select an option</option>
-                        {Object.entries(columnData).map(([key, label]) => (
-                          <option key={key} value={key}>
-                            {label}
-                          </option>
-                        ))}
-                        <option value="custom">Custom Input</option>
-                      </select>
+                    return (
+                      <div key={param.value} className="mb-3">
+                        <label className="block text-sm font-medium mb-1">
+                          Value for {`{{${param.value}}}`}{" "}
+                          {paramLabel && (
+                            <span className="text-gray-600">{`(${paramLabel}):`}</span>
+                          )}
+                          
+                        </label>
 
-                      {/* Custom Input - only when selected */}
-                      {param.isStatic === 0 && (
-                        <input
-                          type="text"
-                          className="block w-full border border-gray-300 rounded-md p-2"
-                          placeholder="Enter custom value"
-                          value={param.name}
-                          onChange={(e) =>
-                            handleParamChange(param.value, e.target.value, 0)
+                        {/* Dropdown */}
+                        <select
+                          className="block w-full border border-gray-300 rounded-md p-2 mb-2"
+                          value={
+                            param.name &&
+                            Object.keys(columnData).includes(param.name)
+                              ? param.name
+                              : param.isStatic === 0
+                                ? "custom"
+                                : ""
                           }
-                        />
-                      )}
-                    </div>
-                  ))}
+                          onChange={(e) => {
+                            const selected = e.target.value;
+                            if (selected === "custom") {
+                              handleParamChange(param.value, "", 0); // custom input mode
+                            } else {
+                              handleParamChange(param.value, selected, 1); // static dropdown selection
+                            }
+                          }}
+                        >
+                          <option value="">Select an option</option>
+                          {Object.entries(columnData).map(([key, label]) => (
+                            <option key={key} value={key}>
+                              {label}
+                            </option>
+                          ))}
+                          <option value="custom">Custom Input</option>
+                        </select>
+
+                        {/* Custom Input */}
+                        {param.isStatic === 0 && (
+                          <input
+                            type="text"
+                            className="block w-full border border-gray-300 rounded-md p-2"
+                            placeholder="Enter custom value"
+                            value={param.name}
+                            onChange={(e) =>
+                              handleParamChange(param.value, e.target.value, 0)
+                            }
+                          />
+                        )}
+                      </div>
+                    );
+                  })}
 
               <div
                 className="p-5 rounded m-10 mx-20"
@@ -359,7 +374,7 @@ export default function TextSidebar({
                   backgroundSize: "contain", // or 'auto' if your image is small
                   backgroundBlendMode: "overlay", // subtle blend with background color
                 }}
-                 >
+              >
                 <div className="bg-[#f4f4f4] p-4 rounded-lg max-w-[90%] mx-2 my-2 relative shadow border border-[#e5ddd5]">
                   {components.map((comp, index) => {
                     switch (comp.type) {
@@ -435,7 +450,7 @@ export default function TextSidebar({
                         return (
                           <div key={index}>
                             <p className="text-[#3b4a54] text-sm whitespace-pre-line leading-snug">
-                              {getBodyContent(comp.text, comp.example)}
+                              {comp.text}
                             </p>
                           </div>
                         );
