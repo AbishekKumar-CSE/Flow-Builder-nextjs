@@ -245,13 +245,13 @@ export default function Sidebar() {
           )}
         </div>
       )}
-      <div
+      {/* <div
         className="p-3 border rounded-lg cursor-pointer flex justify-center items-center hover:bg-red-500 hover:text-white transition-all duration-200 gap-2 shadow-lg"
         // onClick={downloadRawData}
       >
         <Database className="w-5 h-5" />
         <p>Raw Data</p>
-      </div>
+      </div> */}
     </aside>
   );
 }

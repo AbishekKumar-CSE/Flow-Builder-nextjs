@@ -111,8 +111,10 @@ const App = () => {
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
   const [selectedElements, setSelectedElements] = useState([]);
+  const [decryptedData, setDecryptedData] = useState(null);
 
   const [title, setTitle] = useState("");
+  const [flowTitle, setFlowTitle] = useState("");
 
   const [nodeName, setNodeName] = useState("");
   const [nodeImage, setNodeImage] = useState("");
@@ -337,7 +339,7 @@ const getId = () => {
   // When a node is clicked
   const onNodeClick = useCallback((_event, node) => {
     setSelectedElements([node]);
-    setTitle(node.data.title || "Abondoned Flow");
+    setTitle(node.data.title || "Flow Builder");
     setNodeName(node.data.label || "");
     setNodeImage(node.data.image || "");
     setNodeVideo(node.data.video || "");
@@ -412,7 +414,6 @@ const getId = () => {
   }, [nodes, edges]);
 
   // Save flow to local storage
-  const [decryptedData, setDecryptedData] = useState(null);
   const [dataFlowName, setDataFlowName] = useState();
 
 const MySwal = withReactContent(Swal);
@@ -456,6 +457,9 @@ useEffect(() => {
           const parsedData = JSON.parse(decryptedText);
           console.log("Decrypted response:", parsedData);
           setDecryptedData(parsedData?.data);
+          const parsedTitle = JSON.parse(decryptedText)?.title;
+          setFlowTitle(parsedTitle);
+          localStorage.setItem("flowTitle", parsedTitle);
         } catch (error) {
           console.error("Decryption error:", error);
           console.error("Raw response:", responseText);
@@ -465,6 +469,7 @@ useEffect(() => {
         console.error("Fetch error:", error);
       });
   }, [receivedVendorId]);
+  console.log(flowTitle, "Title of the flow");
 
   const onSave = useCallback(() => {
     if (reactFlowInstance) {

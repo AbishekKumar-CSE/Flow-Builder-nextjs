@@ -6,6 +6,7 @@ import { Trash2, Zap } from "lucide-react";
 function TriggerNode({ data, selected, id }) {
   const { deleteElements } = useReactFlow();
   console.log("TriggerNode data:", data);
+  const title = localStorage.getItem("flowTitle");
 
   return (
     <div
@@ -27,7 +28,7 @@ function TriggerNode({ data, selected, id }) {
       {/* Title */}
         <Zap size={26} className="text-white mb-2" />
       <div className="text-center text-xs font-semibold leading-tight">
-        <p>{data?.title == 'Start' ? "Trigger Node" : data?.title}</p>
+        <p>{title}</p>
       </div>
 
       {/* Select Form button */}
