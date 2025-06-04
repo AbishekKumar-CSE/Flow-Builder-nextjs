@@ -1,10 +1,11 @@
 import React from "react";
 import { Handle, Position, useReactFlow } from "reactflow";
-import { Trash2 } from "lucide-react";
+import { Trash2, Zap } from "lucide-react";
 // import { FaWpforms } from "react-icons/fa"; // form icon similar to the image
 
 function TriggerNode({ data, selected, id }) {
   const { deleteElements } = useReactFlow();
+  console.log("TriggerNode data:", data);
 
   return (
     <div
@@ -13,25 +14,26 @@ function TriggerNode({ data, selected, id }) {
         transition-all duration-300`}
     >
       {/* Delete button */}
-      <button
+      {/* <button
         onClick={() => deleteElements({ nodes: [{ id }] })}
         className="absolute top-2 right-2 text-red-600 hover:text-red-300 opacity-0 group-hover:opacity-100 transition"
       >
         <Trash2 size={16} />
-      </button>
+      </button> */}
 
       {/* Form Icon */}
       {/* <FaWpforms size={28} className="mb-2" /> */}
 
       {/* Title */}
+        <Zap size={26} className="text-white mb-2" />
       <div className="text-center text-xs font-semibold leading-tight">
-        <p>{data?.label == 'Start' ? "Trigger Node" : data?.label}</p>
+        <p>{data?.title == 'Start' ? "Trigger Node" : data?.title}</p>
       </div>
 
       {/* Select Form button */}
-      <button className="mt-2 px-3 py-1 bg-white text-blue-500 text-xs rounded-full font-medium shadow hover:bg-gray-100">
+      {/* <button className="mt-2 px-3 py-1 bg-white text-blue-500 text-xs rounded-full font-medium shadow hover:bg-gray-100">
         Select Form
-      </button>
+      </button> */}
 
       {/* Handles */}
       <Handle

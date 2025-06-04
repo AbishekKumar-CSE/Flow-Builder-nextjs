@@ -57,7 +57,6 @@ import ListButtonSidebar from "./component/advanceNode/listButtons/ListButtonSid
 import { Plus, X } from "lucide-react";
 import { motion } from "framer-motion";
 import Data from "./data/data.js";
-import { useRouter } from "next/navigation";
 
 import CryptoJS from "crypto-js";
 
@@ -85,7 +84,6 @@ let id = 0;
 
 const App = () => {
   const token = process.env.NEXT_PUBLIC_JWT_TOKEN;
-  const router = useRouter();
   // Define custom node types
   const nodeTypes = useMemo(
     () => ({
@@ -977,46 +975,48 @@ useEffect(() => {
           days={days}
           setDays={setDays}
         />
-      ) : selectedElements[0]?.type === "triggernode" ? (
-        <TriggerSidebar
-          dataUserId={dataUserId}
-          nodeName={nodeName}
-          setNodeName={setNodeName}
-          nodeImage={nodeImage}
-          setNodeImage={setNodeImage}
-          nodeVideo={nodeVideo}
-          setNodeVideo={setNodeVideo}
-          nodeAudio={nodeAudio}
-          setNodeAudio={setNodeAudio}
-          nodeFile={nodeFile}
-          setNodeFile={setNodeFile}
-          nodeLink={nodeLink}
-          setNodeLink={setNodeLink}
-          nodeFooter1={nodeFooter1}
-          setNodeFooter1={setNodeFooter1}
-          nodeFooter2={nodeFooter2}
-          setNodeFooter2={setNodeFooter2}
-          nodeFooter3={nodeFooter3}
-          setNodeFooter3={setNodeFooter3}
-          selectedNode={selectedElements[0]}
-          setSelectedElements={setSelectedElements}
-          setNodes={setNodes}
-          // NEW scheduling props
-          waitTime={waitTime} // <-- Add this
-          setWaitTime={setWaitTime}
-          waitUnit={waitUnit}
-          setWaitUnit={setWaitUnit}
-          resumeOption={resumeOption}
-          setResumeOption={setResumeOption}
-          startTime={startTime}
-          setStartTime={setStartTime}
-          endTime={endTime}
-          setEndTime={setEndTime}
-          days={days}
-          setDays={setDays}
-          onTriggerSelect={(label) => setTriggerName(label)}
-        />
-      ) : (
+      ) 
+      // : selectedElements[0]?.type === "triggernode" ? (
+      //   <TriggerSidebar
+      //     dataUserId={dataUserId}
+      //     nodeName={nodeName}
+      //     setNodeName={setNodeName}
+      //     nodeImage={nodeImage}
+      //     setNodeImage={setNodeImage}
+      //     nodeVideo={nodeVideo}
+      //     setNodeVideo={setNodeVideo}
+      //     nodeAudio={nodeAudio}
+      //     setNodeAudio={setNodeAudio}
+      //     nodeFile={nodeFile}
+      //     setNodeFile={setNodeFile}
+      //     nodeLink={nodeLink}
+      //     setNodeLink={setNodeLink}
+      //     nodeFooter1={nodeFooter1}
+      //     setNodeFooter1={setNodeFooter1}
+      //     nodeFooter2={nodeFooter2}
+      //     setNodeFooter2={setNodeFooter2}
+      //     nodeFooter3={nodeFooter3}
+      //     setNodeFooter3={setNodeFooter3}
+      //     selectedNode={selectedElements[0]}
+      //     setSelectedElements={setSelectedElements}
+      //     setNodes={setNodes}
+      //     // NEW scheduling props
+      //     waitTime={waitTime} // <-- Add this
+      //     setWaitTime={setWaitTime}
+      //     waitUnit={waitUnit}
+      //     setWaitUnit={setWaitUnit}
+      //     resumeOption={resumeOption}
+      //     setResumeOption={setResumeOption}
+      //     startTime={startTime}
+      //     setStartTime={setStartTime}
+      //     endTime={endTime}
+      //     setEndTime={setEndTime}
+      //     days={days}
+      //     setDays={setDays}
+      //     onTriggerSelect={(label) => setTriggerName(label)}
+      //   />
+      // )
+       : selectedElements[0]?.type === "advancenode" ?(
         <AdvanceSideBar
           dataUserId={dataUserId}
           nodeName={nodeName}
@@ -1052,7 +1052,7 @@ useEffect(() => {
           selectedNode={selectedElements[0]}
           setSelectedElements={setSelectedElements}
         />
-      )}
+      ) : null}
     </div>
   );
 };

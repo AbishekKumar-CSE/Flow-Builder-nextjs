@@ -189,7 +189,7 @@ export default function Sidebar() {
               </details>
 
               {/* Trigger Nodes */}
-              <details className="mb-4">
+              {/* <details className="mb-4">
                 <summary
                   className="cursor-pointer font-semibold flex items-center gap-2"
                   onClick={() => setIsOpen2(!isOpen2)}
@@ -213,7 +213,7 @@ export default function Sidebar() {
                 >
                   <Image className="w-4 h-4" alt="icon" /> Trigger Node
                 </div>
-              </details>
+              </details> */}
 
               {/* Time Nodes */}
               <details className="mb-4">
