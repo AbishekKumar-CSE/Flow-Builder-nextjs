@@ -448,7 +448,8 @@ useEffect(() => {
 }, [decryptedData]);
   
   const reFetchFlow = useCallback(() => {
-    fetch(`${base_url}campaigns/${receivedVendorId}`)  // Get the flow
+    fetch(`${base_url}campaigns/1`)  // Get the flow
+    // fetch(`${base_url}campaigns/${receivedVendorId}`)  // Get the flow
       .then((response) => response.text())
       .then((responseText) => {
         try {
@@ -519,7 +520,7 @@ useEffect(() => {
               title: "Success",
               text: "Save successful!",
               confirmButtonText: "OK",
-              confirmButtonColor: "#3085d6", // Blue color
+              confirmButtonColor: "#3085d6",
               showCancelButton: false,
             }).then((result) => {
               if (result.isConfirmed) onRestore();
