@@ -8,7 +8,7 @@ function TextNode({ data, selected, id }) {
   const { deleteElements } = useReactFlow();
 
   const dataList = Data.data;
-  const router = useRouter()
+  const router = useRouter();
 
   const preUseID = sessionStorage.getItem("id") || 1;
   const userDataId = preUseID - 1;
@@ -27,7 +27,7 @@ function TextNode({ data, selected, id }) {
     // router.push('/model')
   };
 
-  console.log("TextNode data:", data);
+  //console.log("TextNode data:", data);
 
   return (
     <div

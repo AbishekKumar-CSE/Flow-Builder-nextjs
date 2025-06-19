@@ -6,8 +6,7 @@ import { X, ChevronLeft, Edit, List, ArrowLeft } from "lucide-react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import Modal from "react-modal";
-import Image from 'next/image';
-
+import Image from "next/image";
 
 export default function Sidebar({
   dataUserId,
@@ -64,11 +63,11 @@ export default function Sidebar({
     if (field === "footer2") setNodeFooter2(value);
     if (field === "footer3") setNodeFooter3(value);
     if (field === "buttons" && index !== null) {
-        setNodeButtons((prevButtons) => {
-            const updatedButtons = [...prevButtons];
-            updatedButtons[index] = { ...updatedButtons[index], label: value };
-            return updatedButtons;
-        });
+      setNodeButtons((prevButtons) => {
+        const updatedButtons = [...prevButtons];
+        updatedButtons[index] = { ...updatedButtons[index], label: value };
+        return updatedButtons;
+      });
     }
   };
 
@@ -110,7 +109,7 @@ export default function Sidebar({
   const addButton = () => {
     setNodeButtons((prevButtons) => {
       const newButtons = [...prevButtons, { label: "" }];
-      console.log("Updated Buttons:", newButtons);
+      //console.log("Updated Buttons:", newButtons);
       return newButtons;
     });
   };
@@ -127,19 +126,19 @@ export default function Sidebar({
     });
   };
 
-  console.log(nodeButtons);
+  //console.log(nodeButtons);
 
-    const [isDarkMode, setIsDarkMode] = useState(false);
-  
-    useEffect(() => {
-      if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-        setIsDarkMode(true);
-      }
-    }, []);
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
-    const handleChange = (content) => {
-      handleInputChange({ target: { value: content } }, "name");
-    };
+  useEffect(() => {
+    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+      setIsDarkMode(true);
+    }
+  }, []);
+
+  const handleChange = (content) => {
+    handleInputChange({ target: { value: content } }, "name");
+  };
 
   const modules = {
     toolbar: [
@@ -147,34 +146,34 @@ export default function Sidebar({
       [{ list: "ordered" }, { list: "bullet" }], // Ordered & Bullet List
     ],
   };
-  
 
   return (
     <>
       {selectedNode ? (
-        <aside className={`border-r p-5 text-sm max-h-screen overflow-y-auto  w-80 h-full min-h-screen shadow-md transition-all duration-300 flex flex-col ${
-          isDarkMode
-            ? "bg-white border-gray-700 text-gray-900"
-            : "bg-white border-gray-700 text-gray-900"
-        }`}>
-
+        <aside
+          className={`border-r p-5 text-sm max-h-screen overflow-y-auto  w-80 h-full min-h-screen shadow-md transition-all duration-300 flex flex-col ${
+            isDarkMode
+              ? "bg-white border-gray-700 text-gray-900"
+              : "bg-white border-gray-700 text-gray-900"
+          }`}
+        >
           <div className="relative flex items-center justify-between mb-4">
-          <h3
-            className={`text-xl font-bold flex items-center gap-2 pr-8 ${
-              isDarkMode ? "text-black" : ""
-            }`}
-          >
-            <Edit className="w-5 h-5" /> Advance Node
-          </h3>
+            <h3
+              className={`text-xl font-bold flex items-center gap-2 pr-8 ${
+                isDarkMode ? "text-black" : ""
+              }`}
+            >
+              <Edit className="w-5 h-5" /> Advance Node
+            </h3>
 
-          {/* Close Button (X) - Top Right */}
-          <button
-            className="absolute right-0 top-1 p-2 rounded-full text-white bg-red-500 hover:bg-red-600 transition-all duration-200"
-            onClick={() => setSelectedElements([])}
-          >
-            <X className="w-3 h-3" />
-          </button>
-        </div>
+            {/* Close Button (X) - Top Right */}
+            <button
+              className="absolute right-0 top-1 p-2 rounded-full text-white bg-red-500 hover:bg-red-600 transition-all duration-200"
+              onClick={() => setSelectedElements([])}
+            >
+              <X className="w-3 h-3" />
+            </button>
+          </div>
 
           {/* Id select for testing */}
 
@@ -192,51 +191,51 @@ export default function Sidebar({
             </select>
           </div> */}
 
-<label className="block text-sm font-medium py-2">
-        Create a Message:
-      </label>
+          <label className="block text-sm font-medium py-2">
+            Create a Message:
+          </label>
 
           {/* Node Name Input */}
           <div className="w-full  mt-4 p-4 bg-white border border-gray-300 rounded-md shadow-sm">
-      {/* Label */}
-      <label className="block text-sm font-medium text-gray-700 py-2">
-        Question text
-      </label>
+            {/* Label */}
+            <label className="block text-sm font-medium text-gray-700 py-2">
+              Question text
+            </label>
 
-      {/* React Quill Editor */}
-      <div className="border border-gray-300 rounded-md shadow-sm">
-        <ReactQuill
-          theme="snow"
-          value={nodeName === "advancenode" ? "" : nodeName}
-          onChange={handleChange}
-          className="mb-2"
-          placeholder="Enter Your Message"
-          modules={modules}
-        />
-      </div>
+            {/* React Quill Editor */}
+            <div className="border border-gray-300 rounded-md shadow-sm">
+              <ReactQuill
+                theme="snow"
+                value={nodeName === "advancenode" ? "" : nodeName}
+                onChange={handleChange}
+                className="mb-2"
+                placeholder="Enter Your Message"
+                modules={modules}
+              />
+            </div>
 
-      {/* Select Field */}
-      <div className="mt-4">
-        <label className="block text-sm font-medium text-gray-700">
-          Fields
-        </label>
-        <div className="relative mt-1">
-          <select
-            className="w-full p-2 border border-gray-300 rounded-md text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            onChange={handleSelectChange}
-          >
-            <option value="">Select an item</option>
-            {keys.map((item, index) => (
-              <option key={index} value={item}>
-                {item}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
-    </div>
+            {/* Select Field */}
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-gray-700">
+                Fields
+              </label>
+              <div className="relative mt-1">
+                <select
+                  className="w-full p-2 border border-gray-300 rounded-md text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  onChange={handleSelectChange}
+                >
+                  <option value="">Select an item</option>
+                  {keys.map((item, index) => (
+                    <option key={index} value={item}>
+                      {item}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </div>
 
-    <label className="py-1 block text-sm font-medium pt-3">
+          <label className="py-1 block text-sm font-medium pt-3">
             Select File Type:
           </label>
           <select
@@ -267,7 +266,7 @@ export default function Sidebar({
                   src={nodeImage}
                   alt="Uploaded"
                   width={500}
-                height={300}
+                  height={300}
                   className="w-full h-24 object-cover mt-2"
                 />
               )}
@@ -328,9 +327,7 @@ export default function Sidebar({
 
           {selectedType === "file" && (
             <div>
-              <label className="block text-sm font-medium ">
-                Upload File:
-              </label>
+              <label className="block text-sm font-medium ">Upload File:</label>
               <input
                 type="file"
                 accept=".pdf,.docx,.txt,.xlsx,.csv"
@@ -352,7 +349,6 @@ export default function Sidebar({
               )}
             </div>
           )}
-
 
           {/* Dropdown for Message Type */}
           <label className="block text-sm font-medium  mt-4">
@@ -416,7 +412,6 @@ export default function Sidebar({
           {selectedMessageType === "cta" && (
             <div>
               <label className="block text-sm font-medium ">
-                
                 CTA Button URL:
               </label>
               <input
@@ -427,7 +422,7 @@ export default function Sidebar({
               />
 
               <label className="block text-sm font-medium ">
-              CTA Button Display Text:
+                CTA Button Display Text:
               </label>
               <input
                 type="text"
@@ -452,9 +447,7 @@ export default function Sidebar({
 
           {selectedMessageType === "list" && (
             <div>
-              <label className="block text-sm font-medium ">
-                Buttons:
-              </label>
+              <label className="block text-sm font-medium ">Buttons:</label>
 
               {/* Dynamic Button List */}
               {nodeButtons &&
@@ -501,90 +494,85 @@ export default function Sidebar({
           )}
 
           {/* Link */}
-          <label className="block text-sm font-medium ">
-            Link:
-          </label>
+          <label className="block text-sm font-medium ">Link:</label>
           <input
             type="text"
             className="w-full p-2 mb-2 border border-blue-300 text-black my-2 rounded"
             value={nodeLink}
             onChange={(e) => handleInputChange(e, "link")}
           />
-          
         </aside>
       ) : null}
     </>
   );
 }
 
+//   {/* Dropdown for selecting file type */}
+//   <div className="w-full p-4 bg-white border mt-4 border-gray-300 rounded-md shadow-sm">
+//   {/* File Type Selector */}
+//   <label className="py-1 block text-sm font-medium">Select File Type:</label>
+//   <select
+//     className="w-full p-2 mb-4 border border-blue-300 text-black my-2 rounded"
+//     onChange={(e) => {
+//       setSelectedType(e.target.value);
+//       setModalIsOpen(true); // Open modal on selection
+//     }}
+//   >
+//     <option value="">Select Type</option>
+//     <option value="image">Image</option>
+//     <option value="video">Video</option>
+//     <option value="audio">Audio</option>
+//     <option value="file">File</option>
+//   </select>
 
+//   {/* File Preview */}
+//   {filePreview && (
+//     <div className="mt-4 p-2 border border-gray-300 rounded">
+//       {filePreview.type === "image" && <img src={filePreview.url} alt="Uploaded" className="w-full h-24 object-cover" />}
+//       {filePreview.type === "video" && (
+//         <video controls className="w-full h-24">
+//           <source src={filePreview.url} type="video/mp4" />
+//         </video>
+//       )}
+//       {filePreview.type === "audio" && (
+//         <audio controls className="w-full">
+//           <source src={filePreview.url} type="audio/mpeg" />
+//         </audio>
+//       )}
+//       {filePreview.type === "file" && (
+//         <p className="text-blue-700 mt-2">
+//           <a href={filePreview.url} target="_blank" rel="noopener noreferrer" className="underline">
+//             Download File
+//           </a>
+//         </p>
+//       )}
+//     </div>
+//   )}
 
-    //   {/* Dropdown for selecting file type */}
-    //   <div className="w-full p-4 bg-white border mt-4 border-gray-300 rounded-md shadow-sm">
-    //   {/* File Type Selector */}
-    //   <label className="py-1 block text-sm font-medium">Select File Type:</label>
-    //   <select
-    //     className="w-full p-2 mb-4 border border-blue-300 text-black my-2 rounded"
-    //     onChange={(e) => {
-    //       setSelectedType(e.target.value);
-    //       setModalIsOpen(true); // Open modal on selection
-    //     }}
-    //   >
-    //     <option value="">Select Type</option>
-    //     <option value="image">Image</option>
-    //     <option value="video">Video</option>
-    //     <option value="audio">Audio</option>
-    //     <option value="file">File</option>
-    //   </select>
-
-    //   {/* File Preview */}
-    //   {filePreview && (
-    //     <div className="mt-4 p-2 border border-gray-300 rounded">
-    //       {filePreview.type === "image" && <img src={filePreview.url} alt="Uploaded" className="w-full h-24 object-cover" />}
-    //       {filePreview.type === "video" && (
-    //         <video controls className="w-full h-24">
-    //           <source src={filePreview.url} type="video/mp4" />
-    //         </video>
-    //       )}
-    //       {filePreview.type === "audio" && (
-    //         <audio controls className="w-full">
-    //           <source src={filePreview.url} type="audio/mpeg" />
-    //         </audio>
-    //       )}
-    //       {filePreview.type === "file" && (
-    //         <p className="text-blue-700 mt-2">
-    //           <a href={filePreview.url} target="_blank" rel="noopener noreferrer" className="underline">
-    //             Download File
-    //           </a>
-    //         </p>
-    //       )}
-    //     </div>
-    //   )}
-
-    //   {/* Modal for File Upload */}
-    //   <Modal
-    //     isOpen={modalIsOpen}
-    //     onRequestClose={() => setModalIsOpen(false)}
-    //     className="bg-white p-6 rounded-lg shadow-lg w-96 mx-auto border border-gray-300"
-    //     overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center"
-    //   >
-    //     <h2 className="text-lg text-black font-semibold mb-4">Upload {selectedType}</h2>
-    //     <input
-    //       type="file"
-    //       accept={
-    //         selectedType === "image" ? "image/*" :
-    //         selectedType === "video" ? "video/*" :
-    //         selectedType === "audio" ? "audio/*" :
-    //         ".pdf,.docx,.txt,.xlsx,.csv"
-    //       }
-    //       className="w-full p-2 border border-blue-300 rounded"
-    //       onChange={(e) => handleFileChange(e, selectedType)}
-    //     />
-    //     <button
-    //       className="mt-4 w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
-    //       onClick={() => setModalIsOpen(false)}
-    //     >
-    //       Close
-    //     </button>
-    //   </Modal>
-    // </div>
+//   {/* Modal for File Upload */}
+//   <Modal
+//     isOpen={modalIsOpen}
+//     onRequestClose={() => setModalIsOpen(false)}
+//     className="bg-white p-6 rounded-lg shadow-lg w-96 mx-auto border border-gray-300"
+//     overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center"
+//   >
+//     <h2 className="text-lg text-black font-semibold mb-4">Upload {selectedType}</h2>
+//     <input
+//       type="file"
+//       accept={
+//         selectedType === "image" ? "image/*" :
+//         selectedType === "video" ? "video/*" :
+//         selectedType === "audio" ? "audio/*" :
+//         ".pdf,.docx,.txt,.xlsx,.csv"
+//       }
+//       className="w-full p-2 border border-blue-300 rounded"
+//       onChange={(e) => handleFileChange(e, selectedType)}
+//     />
+//     <button
+//       className="mt-4 w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+//       onClick={() => setModalIsOpen(false)}
+//     >
+//       Close
+//     </button>
+//   </Modal>
+// </div>

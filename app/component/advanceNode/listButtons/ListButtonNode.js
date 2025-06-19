@@ -25,7 +25,7 @@ function ListButtonNode({ data, selected, id }) {
     });
   };
 
-  console.log(data);
+  //console.log(data);
   const [selected1, setSelected1] = useState(null);
 
   return (
@@ -55,7 +55,13 @@ function ListButtonNode({ data, selected, id }) {
           {data.label && userData && (
             <div className="">
               <p className="font-bold my-1">Send Message</p>
-              <p className="border rounded p-2">{formatLabel(data.label === "listbuttonnodde" ? "Welcome to { company }" : data.label)}</p>
+              <p className="border rounded p-2">
+                {formatLabel(
+                  data.label === "listbuttonnodde"
+                    ? "Welcome to { company }"
+                    : data.label
+                )}
+              </p>
             </div>
           )}
         </div>
@@ -90,45 +96,52 @@ function ListButtonNode({ data, selected, id }) {
 
           {/* List items display */}
           {data.list?.length ? (
-        data.list.map((item, index) => (
-          <div key={index} className="w-full mt-2 p-2 bg-gray-100 rounded-lg">
-            <div className="relative flex justify-between items-center p-2 border-b last:border-b-0">
-              <label className="flex items-center space-x-2">
-                <input
-                  type="radio"
-                  name="listItem"
-                  className="cursor-pointer"
-                  onChange={() => setSelected1(index)}
-                  checked={selected1 === index}
-                />
-                <span className="font-semibold text-gray-700">
-                  {item.title || "Untitled"}
-                </span>
-              </label>
+            data.list.map((item, index) => (
+              <div
+                key={index}
+                className="w-full mt-2 p-2 bg-gray-100 rounded-lg"
+              >
+                <div className="relative flex justify-between items-center p-2 border-b last:border-b-0">
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      name="listItem"
+                      className="cursor-pointer"
+                      onChange={() => setSelected1(index)}
+                      checked={selected1 === index}
+                    />
+                    <span className="font-semibold text-gray-700">
+                      {item.title || "Untitled"}
+                    </span>
+                  </label>
 
-              {/* Handle for flow connection */}
-              <Handle
-                id={`handle-list-${index}`}
-                type="source"
-                position={Position.Right}
-                className={`custom-handle ${data.isActive ? "active" : "inactive"}`}
-                style={{
-                  right: -10,
-                  top: "50%",
-                  transform: "translateY(-50%)",
-                }}
-              />
-            </div>
+                  {/* Handle for flow connection */}
+                  <Handle
+                    id={`handle-list-${index}`}
+                    type="source"
+                    position={Position.Right}
+                    className={`custom-handle ${
+                      data.isActive ? "active" : "inactive"
+                    }`}
+                    style={{
+                      right: -10,
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                    }}
+                  />
+                </div>
 
-            {/* Show description when the radio button is selected */}
-            {selected1 === index && (
-              <p className="mt-2 text-sm text-gray-600">{item.description || "No description"}</p>
-            )}
-          </div>
-        ))
-      ) : (
-        <p className="hidden"></p>
-      )}
+                {/* Show description when the radio button is selected */}
+                {selected1 === index && (
+                  <p className="mt-2 text-sm text-gray-600">
+                    {item.description || "No description"}
+                  </p>
+                )}
+              </div>
+            ))
+          ) : (
+            <p className="hidden"></p>
+          )}
         </div>
       </div>
 

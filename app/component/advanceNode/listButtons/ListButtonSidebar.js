@@ -50,13 +50,13 @@ export default function ListButtonSidebar({
       });
     }
 
-  if (field === "list" && index !== null) {
-    setNodeList((prevList) => {
-      const updatedList = [...prevList];
-      updatedList[index] = { ...updatedList[index], [field]: value };
-      return updatedList;
-    });
-  }
+    if (field === "list" && index !== null) {
+      setNodeList((prevList) => {
+        const updatedList = [...prevList];
+        updatedList[index] = { ...updatedList[index], [field]: value };
+        return updatedList;
+      });
+    }
   };
 
   const handleSelectChange = (e) => {
@@ -69,14 +69,14 @@ export default function ListButtonSidebar({
     }
   };
 
-    const handleChange = (content) => {
-      handleInputChange({ target: { value: content } }, "name");
-    };
+  const handleChange = (content) => {
+    handleInputChange({ target: { value: content } }, "name");
+  };
 
   const addButton = () => {
     setNodeButtons((prevButtons) => {
       const newButtons = [...prevButtons, { label: "Button" }];
-      console.log("Updated Buttons:", newButtons);
+      //console.log("Updated Buttons:", newButtons);
       return newButtons;
     });
   };
@@ -93,7 +93,7 @@ export default function ListButtonSidebar({
     });
   };
 
-  console.log(nodeButtons);
+  //console.log(nodeButtons);
 
   const [isDarkMode, setIsDarkMode] = useState(false);
 
@@ -105,10 +105,7 @@ export default function ListButtonSidebar({
 
   // **LIST MESSAGE FUNCTIONS**
   const addListMessage = () => {
-    setNodeList((prev) => [
-      ...prev,
-      {id: "", title: "", description: "" },
-    ]);
+    setNodeList((prev) => [...prev, { id: "", title: "", description: "" }]);
   };
 
   const removeListMessage = (index) => {
@@ -125,12 +122,12 @@ export default function ListButtonSidebar({
 
   const keys = Object.keys(Data.data[0]);
 
-const modules = {
-  toolbar: [
-    ["bold", "italic"], // Bold & Italic
-    [{ list: "ordered" }, { list: "bullet" }], // Ordered & Bullet List
-  ],
-};
+  const modules = {
+    toolbar: [
+      ["bold", "italic"], // Bold & Italic
+      [{ list: "ordered" }, { list: "bullet" }], // Ordered & Bullet List
+    ],
+  };
 
   return (
     <>
@@ -176,49 +173,49 @@ const modules = {
             </select>
           </div> */}
 
-<label className="block text-sm font-medium py-2">
-        Create a Message:
-      </label>
+          <label className="block text-sm font-medium py-2">
+            Create a Message:
+          </label>
 
           {/* Node Name Input */}
           <div className="w-full  mt-4 p-4 bg-white border border-gray-300 rounded-md shadow-sm">
-      {/* Label */}
-      <label className="block text-sm font-medium text-gray-700 py-2">
-        Question text
-      </label>
+            {/* Label */}
+            <label className="block text-sm font-medium text-gray-700 py-2">
+              Question text
+            </label>
 
-      {/* React Quill Editor */}
-      <div className="border border-gray-300 rounded-md shadow-sm">
-        <ReactQuill
-          theme="snow"
-          value={nodeName === "listbuttonnodde" ? "" : nodeName}
-          onChange={handleChange}
-          className="mb-2"
-          placeholder="Enter Your Message"
-          modules={modules}
-        />
-      </div>
+            {/* React Quill Editor */}
+            <div className="border border-gray-300 rounded-md shadow-sm">
+              <ReactQuill
+                theme="snow"
+                value={nodeName === "listbuttonnodde" ? "" : nodeName}
+                onChange={handleChange}
+                className="mb-2"
+                placeholder="Enter Your Message"
+                modules={modules}
+              />
+            </div>
 
-      {/* Select Field */}
-      <div className="mt-4">
-        <label className="block text-sm font-medium text-gray-700">
-          Fields
-        </label>
-        <div className="relative mt-1">
-          <select
-            className="w-full p-2 border border-gray-300 rounded-md text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            onChange={handleSelectChange}
-          >
-            <option value="">Select an item</option>
-            {keys.map((item, index) => (
-              <option key={index} value={item}>
-                {item}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
-    </div>
+            {/* Select Field */}
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-gray-700">
+                Fields
+              </label>
+              <div className="relative mt-1">
+                <select
+                  className="w-full p-2 border border-gray-300 rounded-md text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  onChange={handleSelectChange}
+                >
+                  <option value="">Select an item</option>
+                  {keys.map((item, index) => (
+                    <option key={index} value={item}>
+                      {item}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </div>
 
           {/* Dropdown for Message Type */}
           <label className="block text-sm font-medium py-2">
@@ -284,14 +281,16 @@ const modules = {
               {nodeList.map((item, index) => (
                 <div key={index} className="text-black mb-2">
                   <div className="flex content-between">
-                  <h2 className="text-bold text-white py-2">List Item {index + 1}</h2>
-                  
-                  <button
-                    className="text-red-500 hover:text-red-700 ms-auto p-2"
-                    onClick={() => removeListMessage(index)}
-                  >
-                    <XCircle size={18} />
-                  </button>
+                    <h2 className="text-bold text-white py-2">
+                      List Item {index + 1}
+                    </h2>
+
+                    <button
+                      className="text-red-500 hover:text-red-700 ms-auto p-2"
+                      onClick={() => removeListMessage(index)}
+                    >
+                      <XCircle size={18} />
+                    </button>
                   </div>
                   <input
                     type="text"

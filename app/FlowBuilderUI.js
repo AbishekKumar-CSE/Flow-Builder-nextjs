@@ -20,7 +20,7 @@ import ReactFlow, {
   Background,
 } from "reactflow";
 import Swal from "sweetalert2";
-import withReactContent from 'sweetalert2-react-content';
+import withReactContent from "sweetalert2-react-content";
 import "reactflow/dist/base.css";
 import "../tailwind.config.js";
 import CustomStraightEdge from "./component/CustomStepEdge.js";
@@ -83,6 +83,7 @@ let id = 0;
 // const getId = () => `node_${id++}`;
 
 const App = () => {
+  console.log("version 5.2")
   const token = process.env.NEXT_PUBLIC_JWT_TOKEN;
   // Define custom node types
   const nodeTypes = useMemo(
@@ -159,34 +160,34 @@ const App = () => {
   // const [receivedVendorId, setRecievedVendorId] = useState();
   const [receivedVendorId1, setRecievedVendorId1] = useState();
   const idCounter = useRef(0);
-const getId = () => {
-  if (nodes.length > 0) {
-    // Get all numeric IDs (both "node_X" and plain numbers)
-    const numericIds = nodes.map(node => {
-      if (node.id.startsWith('node_')) {
-        return parseInt(node.id.replace('node_', ''), 10);
-      }
-      return parseInt(node.id, 10) || 0;
-    });
-    
-    const maxId = Math.max(...numericIds);
-    idCounter.current = maxId + 1;
-  }
-  return `node_${idCounter.current++}`;
-};
+  const getId = () => {
+    if (nodes.length > 0) {
+      // Get all numeric IDs (both "node_X" and plain numbers)
+      const numericIds = nodes.map((node) => {
+        if (node.id.startsWith("node_")) {
+          return parseInt(node.id.replace("node_", ""), 10);
+        }
+        return parseInt(node.id, 10) || 0;
+      });
+
+      const maxId = Math.max(...numericIds);
+      idCounter.current = maxId + 1;
+    }
+    return `node_${idCounter.current++}`;
+  };
 
   useEffect(() => {
-  if (nodes.length > 0) {
-    const numericIds = nodes.map(node => {
-      if (node.id.startsWith('node_')) {
-        return parseInt(node.id.replace('node_', ''), 10);
-      }
-      return parseInt(node.id, 10) || 0;
-    });
-    
-    idCounter.current = Math.max(...numericIds) + 1;
-  }
-}, [nodes]);
+    if (nodes.length > 0) {
+      const numericIds = nodes.map((node) => {
+        if (node.id.startsWith("node_")) {
+          return parseInt(node.id.replace("node_", ""), 10);
+        }
+        return parseInt(node.id, 10) || 0;
+      });
+
+      idCounter.current = Math.max(...numericIds) + 1;
+    }
+  }, [nodes]);
 
   useEffect(() => {
     if (message != null) {
@@ -197,14 +198,16 @@ const getId = () => {
     }
   }, [message]);
 
-  console.log(message, "Recieved Message")
-  const receivedVendorId = localStorage.getItem("vendorIdLocal")
+  //console.log(message, "Recieved Message")
+  const receivedVendorId = localStorage.getItem("vendorIdLocal");
 
   useEffect(() => {
     async function fetchMessage() {
       try {
         // const res = await fetch("http://localhost:3001/api/message");
-        const res = await fetch("https://flow-builder-nextjs.vercel.app/api/message");
+        const res = await fetch(
+          "https://flow-builder-nextjs.vercel.app/api/message"
+        );
         const data = await res.json();
         setMessage(data.message || null);
       } catch (error) {
@@ -214,7 +217,7 @@ const getId = () => {
     fetchMessage();
   }, []);
 
-  console.log(message, "Message of the front end finally received");
+  //console.log(message, "Message of the front end finally received");
 
   // Update node data when any of the input states change
   useEffect(() => {
@@ -416,47 +419,47 @@ const getId = () => {
   // Save flow to local storage
   const [dataFlowName, setDataFlowName] = useState();
 
-const MySwal = withReactContent(Swal);
+  const MySwal = withReactContent(Swal);
 
-useEffect(() => {
-  if (decryptedData === undefined) {
-    // Show loader
-    MySwal.fire({
-      title: 'Loading...',
-      allowOutsideClick: false,
-      allowEscapeKey: false,
-      didOpen: () => {
-        Swal.showLoading();
-      },
-    });
+  useEffect(() => {
+    if (decryptedData === undefined) {
+      // Show loader
+      MySwal.fire({
+        title: "Loading...",
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
 
-    const timer = setTimeout(() => {
-      window.location.reload(); // fallback in App Router
-    }, 5000);
+      const timer = setTimeout(() => {
+        window.location.reload(); // fallback in App Router
+      }, 5000);
 
-    return () => clearTimeout(timer); // cleanup timeout on unmount or dependency change
-  } else {
-    Swal.close(); // hide loader
+      return () => clearTimeout(timer); // cleanup timeout on unmount or dependency change
+    } else {
+      Swal.close(); // hide loader
 
-    try {
-      const dataFlowName = JSON.parse(decryptedData);
-      setDataFlowName(dataFlowName);
-    } catch (error) {
-      console.error('Error parsing decryptedData:', error);
+      try {
+        const dataFlowName = JSON.parse(decryptedData);
+        setDataFlowName(dataFlowName);
+      } catch (error) {
+        console.error("Error parsing decryptedData:", error);
+      }
     }
-  }
-}, [decryptedData]);
-  
+  }, [decryptedData]);
+
   const reFetchFlow = useCallback(() => {
-    fetch(`${base_url}campaigns/1`)  // Get the flow
-    // fetch(`${base_url}campaigns/${receivedVendorId}`)  // Get the flow
+    fetch(`${base_url}campaigns/1`) // Get the flow
+      // fetch(`${base_url}campaigns/${receivedVendorId}`)  // Get the flow
       .then((response) => response.text())
       .then((responseText) => {
         try {
           const bytes = CryptoJS.AES.decrypt(responseText, SECRET_KEY);
           const decryptedText = bytes.toString(CryptoJS.enc.Utf8);
           const parsedData = JSON.parse(decryptedText);
-          console.log("Decrypted response:", parsedData);
+          //console.log("Decrypted response:", parsedData);
           setDecryptedData(parsedData?.data);
           const parsedTitle = JSON.parse(decryptedText)?.title;
           setFlowTitle(parsedTitle);
@@ -470,7 +473,7 @@ useEffect(() => {
         console.error("Fetch error:", error);
       });
   }, [receivedVendorId]);
-  console.log(flowTitle, "Title of the flow");
+  //console.log(flowTitle, "Title of the flow");
 
   const onSave = useCallback(() => {
     if (reactFlowInstance) {
@@ -492,7 +495,7 @@ useEffect(() => {
           flow_json: flow,
         };
 
-        console.log(payload, "Payload Of create flow");
+        //console.log(payload, "Payload Of create flow");
 
         fetch(`${base_url}campaigns/${receivedVendorId}`, {
           method: "PUT",
@@ -509,7 +512,7 @@ useEffect(() => {
             try {
               const bytes = CryptoJS.AES.decrypt(encryptedResponse, SECRET_KEY);
               const decryptedText = bytes.toString(CryptoJS.enc.Utf8);
-              console.log("PUT response decrypted:", decryptedText);
+              //console.log("PUT response decrypted:", decryptedText);
             } catch (error) {
               console.error("Error decrypting PUT response:", error);
             }
@@ -535,7 +538,7 @@ useEffect(() => {
     }
   }, [reactFlowInstance, nodes, edges, isNodeUnconnected, reFetchFlow]);
 
-  console.log(dataFlowName, "Flow Data Home UI");
+  //console.log(dataFlowName, "Flow Data Home UI");
 
   const updateFlow = async (flow) => {
     const temData = localStorage.getItem("templateData");
@@ -548,7 +551,7 @@ useEffect(() => {
       template_data: jsonTempData,
     };
 
-    console.log(payload, "Payload");
+    //console.log(payload, "Payload");
 
     fetch(`${base_url}automation/create`, {
       method: "POST",
@@ -582,7 +585,7 @@ useEffect(() => {
     }
   }, [decryptedData]);
 
-  console.log(decryptedData, "Decrypted data");
+  //console.log(decryptedData, "Decrypted data");
 
   // Restore flow from local storage
   const onRestore = useCallback(() => {
@@ -610,7 +613,7 @@ useEffect(() => {
 
   const onConnect = useCallback(
     (params) => {
-      console.log("Edge created: ", params);
+      //console.log("Edge created: ", params);
       setEdges((eds) => addEdge({ ...params, type: "step" }, eds));
     },
     [setEdges]
@@ -622,35 +625,35 @@ useEffect(() => {
     event.dataTransfer.dropEffect = "move";
   }, []);
 
-  // Handle drop event to add a new node 
+  // Handle drop event to add a new node
   const onDrop = useCallback(
-  (event) => {
-    event.preventDefault();
+    (event) => {
+      event.preventDefault();
 
-    const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
-    const type = event.dataTransfer.getData("application/reactflow");
+      const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
+      const type = event.dataTransfer.getData("application/reactflow");
 
-    if (typeof type === "undefined" || !type) {
-      return;
-    }
+      if (typeof type === "undefined" || !type) {
+        return;
+      }
 
-    const position = reactFlowInstance.project({
-      x: event.clientX - reactFlowBounds.left,
-      y: event.clientY - reactFlowBounds.top,
-    });
-    
-    const newNode = {
-      id: getId(), // This will now generate proper unique IDs
-      type,
-      position,
-      data: { label: `${type}` },
-    };
+      const position = reactFlowInstance.project({
+        x: event.clientX - reactFlowBounds.left,
+        y: event.clientY - reactFlowBounds.top,
+      });
 
-    console.log("Adding new node:", newNode); // Debug log
-    setNodes((nds) => [...nds, newNode]);
-  },
-  [reactFlowInstance, getId]
-);
+      const newNode = {
+        id: getId(), // This will now generate proper unique IDs
+        type,
+        position,
+        data: { label: `${type}` },
+      };
+
+      //console.log("Adding new node:", newNode); // Debug log
+      setNodes((nds) => [...nds, newNode]);
+    },
+    [reactFlowInstance, getId]
+  );
 
   const rfStyle = {
     backgroundColor: "#111827",
@@ -679,8 +682,8 @@ useEffect(() => {
     fitView({ padding: 0.5 }); // Adjust padding as needed
   }, []);
 
-  console.log(templateData, "Template data from the Home");
-  console.log(edges, "Edges data from the Home");
+  //console.log(templateData, "Template data from the Home");
+  //console.log(edges, "Edges data from the Home");
 
   return (
     <div className="flex flex-row min-h-screen lg:flex-row">
@@ -981,8 +984,7 @@ useEffect(() => {
           days={days}
           setDays={setDays}
         />
-      ) 
-      // : selectedElements[0]?.type === "triggernode" ? (
+      ) : // : selectedElements[0]?.type === "triggernode" ? (
       //   <TriggerSidebar
       //     dataUserId={dataUserId}
       //     nodeName={nodeName}
@@ -1022,7 +1024,7 @@ useEffect(() => {
       //     onTriggerSelect={(label) => setTriggerName(label)}
       //   />
       // )
-       : selectedElements[0]?.type === "advancenode" ?(
+      selectedElements[0]?.type === "advancenode" ? (
         <AdvanceSideBar
           dataUserId={dataUserId}
           nodeName={nodeName}

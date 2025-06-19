@@ -1,6 +1,6 @@
 {
   "name": "chatbot-flow-builder",
-  "version": "0.1.2",
+  "version": "5.2.0",
   "private": false,
   "main": "index.js",
   "scripts": {

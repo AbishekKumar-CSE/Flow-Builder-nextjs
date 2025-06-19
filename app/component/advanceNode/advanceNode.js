@@ -5,7 +5,7 @@ import { Handle, Position, useReactFlow } from "reactflow";
 import Link from "next/link";
 import { Trash2, Zap } from "lucide-react";
 import Data from "@/app/data/data";
-import Image from 'next/image';
+import Image from "next/image";
 
 function TextNode({ data, selected, id }) {
   const { deleteElements } = useReactFlow();
@@ -29,7 +29,7 @@ function TextNode({ data, selected, id }) {
     });
   };
 
-  console.log(data);
+  //console.log(data);
 
   return (
     <div
@@ -296,8 +296,7 @@ function TextNode({ data, selected, id }) {
         type="target"
         position={Position.Left}
         className="w-1 rounded-full bg-slate-500 "
-      >
-      </Handle>
+      ></Handle>
       {/* <Handle
         id="b"
         type="source"

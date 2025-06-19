@@ -3,9 +3,9 @@ import { setMessage } from "@/lib/dataStore";
 export async function POST(request) {
   try {
     const body = await request.json();
-    console.log("Received message:", body.message);
+    //console.log("Received message:", body.message);
 
-    setMessage(body.message);  // Store only the message string/number
+    setMessage(body.message); // Store only the message string/number
 
     return new Response(JSON.stringify({ success: true }), {
       status: 200,
@@ -17,10 +17,13 @@ export async function POST(request) {
     });
   } catch (error) {
     console.error("Error in POST /api/receive:", error);
-    return new Response(JSON.stringify({ success: false, error: error.message }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({ success: false, error: error.message }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   }
 }
 
@@ -36,16 +39,13 @@ export async function OPTIONS() {
   });
 }
 
-
-
-
 // // app/api/receive/route.js
 // import { setMessage } from "@/lib/dataStore";
 
 // export async function POST(request) {
 //   try {
 //     const body = await request.json();
-//     console.log("Received message:", body.message);
+//     //console.log("Received message:", body.message);
 
 //     setMessage(body); // Store message
 

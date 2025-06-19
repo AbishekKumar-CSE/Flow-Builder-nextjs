@@ -4,7 +4,7 @@ import { Trash2, Clock3, ChevronDown } from "lucide-react";
 
 function TimeNode({ data, selected, id }) {
   const { deleteElements } = useReactFlow();
-  console.log("TimeNode data:", data);
+  //console.log("TimeNode data:", data);
 
   return (
     <div
@@ -41,15 +41,14 @@ function TimeNode({ data, selected, id }) {
         position={Position.Left}
         className="w-1 rounded-full bg-slate-500"
       />
-          <Handle
-            id="b"
-            type="source"
-            position={Position.Right}
-            className="custom-handle p-2" 
-          >
-                    <span className="handle-icon">+</span>
-    
-          </Handle>
+      <Handle
+        id="b"
+        type="source"
+        position={Position.Right}
+        className="custom-handle p-2"
+      >
+        <span className="handle-icon">+</span>
+      </Handle>
     </div>
   );
 }
