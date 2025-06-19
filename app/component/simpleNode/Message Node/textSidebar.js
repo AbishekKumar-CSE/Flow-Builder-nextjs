@@ -5,27 +5,17 @@ import { X, Edit } from "lucide-react";
 import CryptoJS from "crypto-js";
 import whatsappImage from "../../../../public/wa.jpg";
 import placeholderImage from "../../../../public/placeholder.png";
+import Swal from "sweetalert2";
 const SECRET_KEY = "48962874218962874213689687";
 
 export default function TextSidebar({
-  nodeName,
-  setNodeName,
-  nodeImage,
-  nodeVideo,
-  setNodeImage,
-  setNodeVideo,
-  nodeLink,
-  setNodeLink,
   selectedNode,
-  setNodeOption,
   setSelectedElements,
   setTemplateData,
-  templateData,
   templateParams,
   setTemplateParams,
   setTemplateId,
   templateId,
-  templateName,
   setTemplateName,
 }) {
   const [templateData1, setTemplateData1] = useState(null);
@@ -98,7 +88,9 @@ export default function TextSidebar({
 
   useEffect(() => {
     if (decryptedData.length > 0 && templateId) {
-      const selectedTemplate = decryptedData.find((t) => t.id === templateId);
+      const selectedTemplate = decryptedData.find(
+        (t) => t.id === parseInt(templateId)
+      );
       if (selectedTemplate) {
         setTemplateName(selectedTemplate.templateName);
 
@@ -187,20 +179,63 @@ export default function TextSidebar({
     };
   };
 
-  const handleParamChange = (fieldName, newValue, isStatic) => {
+  const handleParamChange = (fieldName, newValue) => {
     setTemplateParams((prevParams) => ({
       ...prevParams,
       [fieldName]: newValue, // only store the value directly
     }));
   };
 
+  // const handleSelectChange = (e) => {
+  //   const selectedId = e.target.value;
+  //   const selectedTemplate = decryptedData.find((t) => t.id === selectedId);
+
+  //   if (!selectedTemplate) return;
+
+  //   setTemplateId(selectedTemplate.id);
+  //   setTemplateName(selectedTemplate.templateName);
+
+  //   try {
+  //     const parsedData = JSON.parse(selectedTemplate.data);
+  //     setParseTemplateData(parsedData);
+
+  //     let components = [];
+  //     if (parsedData.template?.components) {
+  //       components = parsedData.template.components;
+  //     } else if (parsedData.components) {
+  //       components = parsedData.components;
+  //     } else if (Array.isArray(parsedData)) {
+  //       components = parsedData;
+  //     }
+
+  //     setTemplateData1(components);
+  //     const params = extractTemplateParameters(components);
+  //     setTemplateParams(params);
+  //   } catch (err) {
+  //     console.error("Template parsing error:", err);
+  //     setTemplateName("");
+  //     setTemplateParams({});
+  //     setParseTemplateData(null);
+  //   }
+  // };
+
   const handleSelectChange = (e) => {
     const selectedId = e.target.value;
-    const selectedTemplate = decryptedData.find((t) => t.id === selectedId);
+    if (!selectedId) {
+      console.error("No Id found");
+      return; // Handle empty selection
+    }
+    setTemplateId(selectedId);
 
-    if (!selectedTemplate) return;
+    const selectedTemplate = decryptedData.find(
+      (t) => t.id === parseInt(selectedId)
+    );
+    if (!selectedTemplate) {
+      console.error("no template data");
+      return;
+    }
 
-    setTemplateId(selectedTemplate.id);
+    setTemplateId(selectedId); // Update templateId state
     setTemplateName(selectedTemplate.templateName);
 
     try {
@@ -299,6 +334,17 @@ export default function TextSidebar({
       console.error("Upload error:", error);
     }
   };
+
+  const handleSave = () => {
+    Swal.fire({
+      icon: "success",
+      title: "Template Selected",
+      text: "Updated Successfuly!",
+      timer: 1500,
+      showConfirmButton: false,
+      timerProgressBar: true
+    })
+  }
 
   // useEffect(() => {
   //   if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
@@ -503,10 +549,6 @@ export default function TextSidebar({
   //   }
   // }, [parseTemplateData, templateParams]);
 
-  console.log(components, "Bla Bla Bla");
-  console.log(JSON.stringify(templateParams), "template Params");
-  // {getBodyContent(comp.text, comp.example)}
-
   return (
     <>
       {selectedNode && (
@@ -542,7 +584,7 @@ export default function TextSidebar({
             <select
               className="block w-full border border-gray-300 rounded-md p-2 mb-4"
               onChange={handleSelectChange}
-              value={templateId || ""}
+              value={templateId}
             >
               <option value="" disabled>
                 Select a template
@@ -774,6 +816,11 @@ export default function TextSidebar({
               </div>
             </div>
           )}
+          <div className="flex justify-end" onClick={handleSave}>
+          <button className="bg-orange-600 hover:bg-orange-700 text-white font-medium py-2 px-4 rounded-md shadow-sm transition duration-200 ">
+            Save
+          </button>
+          </div>
         </aside>
       )}
     </>
