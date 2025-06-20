@@ -451,8 +451,8 @@ const App = () => {
   }, [decryptedData]);
 
   const reFetchFlow = useCallback(() => {
-    fetch(`${base_url}campaigns/1`) // Get the flow
-      // fetch(`${base_url}campaigns/${receivedVendorId}`)  // Get the flow
+    // fetch(`${base_url}campaigns/1`) // Get the flow
+      fetch(`${base_url}campaigns/${receivedVendorId}`)  // Get the flow
       .then((response) => response.text())
       .then((responseText) => {
         try {

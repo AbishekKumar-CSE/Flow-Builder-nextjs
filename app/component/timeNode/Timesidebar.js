@@ -143,13 +143,12 @@ export default function TimeSidebar({
           >
             <option value="Minutes">Minute(s)</option>
             <option value="Hours">Hour(s)</option>
-            <option value="Days">Day(s)</option>
           </select>
         </div>
       </div>
 
       {/* Resume Workflow Option */}
-      <div className="mb-4">
+      {/* <div className="mb-4">
         <label className="block font-bold text-gray-700 mb-1">
           When to resume workflow
         </label>
@@ -191,10 +190,10 @@ export default function TimeSidebar({
             </div>
           )}
         </div>
-      </div>
+      </div> */}
 
       {/* Days Selection */}
-      <div className="mb-4">
+      {/* <div className="mb-4">
         <label className="block text-gray-700 mb-1 font-bold py-2">
           When to perform this action
         </label>
@@ -213,7 +212,7 @@ export default function TimeSidebar({
             </label>
           ))}
         </div>
-      </div>
+      </div> */}
 
       {/* Action Buttons */}
       <div className="mt-4 flex justify-end gap-2">
