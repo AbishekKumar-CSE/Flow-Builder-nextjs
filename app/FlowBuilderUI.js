@@ -83,7 +83,7 @@ let id = 0;
 // const getId = () => `node_${id++}`;
 
 const App = () => {
-  console.log("version 5.2")
+  console.log("version 5.3");
   const token = process.env.NEXT_PUBLIC_JWT_TOKEN;
   // Define custom node types
   const nodeTypes = useMemo(
@@ -452,7 +452,7 @@ const App = () => {
 
   const reFetchFlow = useCallback(() => {
     // fetch(`${base_url}campaigns/1`) // Get the flow
-      fetch(`${base_url}campaigns/${receivedVendorId}`)  // Get the flow
+    fetch(`${base_url}campaigns/${receivedVendorId}`) // Get the flow
       .then((response) => response.text())
       .then((responseText) => {
         try {
@@ -525,8 +525,13 @@ const App = () => {
               confirmButtonText: "OK",
               confirmButtonColor: "#3085d6",
               showCancelButton: false,
+              allowOutsideClick: false,
+              allowEscapeKey: false,
+              showConfirmButton: true,
             }).then((result) => {
-              if (result.isConfirmed) onRestore();
+              if (result.isConfirmed) {
+                onRestore();
+              }
             });
 
             reFetchFlow();
