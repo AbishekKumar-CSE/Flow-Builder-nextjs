@@ -497,7 +497,7 @@ const App = () => {
           flow_json: flow,
         };
 
-        //console.log(payload, "Payload Of create flow");
+        console.log(payload, "Payload Of create flow");
 
         fetch(`${base_url}campaigns/${receivedVendorId}`, {
           method: "PUT",
@@ -524,17 +524,20 @@ const App = () => {
               icon: "success",
               title: "Success",
               text: "Save successful!",
-              confirmButtonText: "OK",
               confirmButtonColor: "#3085d6",
               showCancelButton: false,
               allowOutsideClick: false,
               allowEscapeKey: false,
-              showConfirmButton: true,
-            }).then((result) => {
-              if (result.isConfirmed) {
-                onRestore();
-              }
+              showConfirmButton: false,
+              timer: 2000,
+              timerProgressBar: true,
             });
+
+            // .then((result) => {
+            //   if (result.isConfirmed) {
+            //     onRestore();
+            //   }
+            // });
 
             // reFetchFlow();
           })
