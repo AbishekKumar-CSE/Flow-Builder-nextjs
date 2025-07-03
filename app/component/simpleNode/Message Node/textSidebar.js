@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { X, Edit } from "lucide-react";
 import CryptoJS from "crypto-js";
 import whatsappImage from "../../../../public/wa.jpg";
@@ -23,8 +23,15 @@ export default function TextSidebar({
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [columnData, setColumnData] = useState([]);
   const [parseTemplateData, setParseTemplateData] = useState();
+  const [headerMedia, setHeaderMedia] = useState(null);
+  const [headerMediaPreview, setHeaderMediaPreview] = useState(null);
+  const [docUrl, setDocUrl] = useState("");
+  
+  const fileInputRef = useRef(null);
   const base_url = process.env.NEXT_PUBLIC_BASE_URL;
   const vendorId = process.env.NEXT_PUBLIC_VENDOR_ID;
+  const vendor__uid = process.env.NEXT_PUBLIC_VENDOR_UID;
+  const base_uri = process.env.NEXT_PUBLIC_BASE_URI;
 
   useEffect(() => {
     if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
@@ -179,51 +186,23 @@ export default function TextSidebar({
     };
   };
 
-  const handleParamChange = (fieldName, newValue) => {
+  const handleParamChange = (fieldName, newValue, isStatic = 1) => {
     setTemplateParams((prevParams) => ({
       ...prevParams,
-      [fieldName]: newValue, // only store the value directly
+      [fieldName]: {
+        ...prevParams[fieldName],
+        value: newValue,
+        isStatic: isStatic,
+        ...(isStatic === 0 ? { name: newValue } : {})
+      }
     }));
   };
-
-  // const handleSelectChange = (e) => {
-  //   const selectedId = e.target.value;
-  //   const selectedTemplate = decryptedData.find((t) => t.id === selectedId);
-
-  //   if (!selectedTemplate) return;
-
-  //   setTemplateId(selectedTemplate.id);
-  //   setTemplateName(selectedTemplate.templateName);
-
-  //   try {
-  //     const parsedData = JSON.parse(selectedTemplate.data);
-  //     setParseTemplateData(parsedData);
-
-  //     let components = [];
-  //     if (parsedData.template?.components) {
-  //       components = parsedData.template.components;
-  //     } else if (parsedData.components) {
-  //       components = parsedData.components;
-  //     } else if (Array.isArray(parsedData)) {
-  //       components = parsedData;
-  //     }
-
-  //     setTemplateData1(components);
-  //     const params = extractTemplateParameters(components);
-  //     setTemplateParams(params);
-  //   } catch (err) {
-  //     console.error("Template parsing error:", err);
-  //     setTemplateName("");
-  //     setTemplateParams({});
-  //     setParseTemplateData(null);
-  //   }
-  // };
 
   const handleSelectChange = (e) => {
     const selectedId = e.target.value;
     if (!selectedId) {
       console.error("No Id found");
-      return; // Handle empty selection
+      return;
     }
     setTemplateId(selectedId);
 
@@ -235,7 +214,6 @@ export default function TextSidebar({
       return;
     }
 
-    setTemplateId(selectedId); // Update templateId state
     setTemplateName(selectedTemplate.templateName);
 
     try {
@@ -254,6 +232,7 @@ export default function TextSidebar({
       setTemplateData1(components);
       const params = extractTemplateParameters(components);
       setTemplateParams(params);
+      setHeaderMediaPreview(null); // Reset media preview when template changes
     } catch (err) {
       console.error("Template parsing error:", err);
       setTemplateName("");
@@ -325,7 +304,6 @@ export default function TextSidebar({
       const url = responseData.url || responseData.data?.url;
       setDocUrl(url);
 
-      // Update templateParams with the media URL
       setTemplateParams((prevParams) => ({
         ...prevParams,
         [`header_${fileType}`]: url,
@@ -339,215 +317,12 @@ export default function TextSidebar({
     Swal.fire({
       icon: "success",
       title: "Template Selected",
-      text: "Updated Successfuly!",
+      text: "Updated Successfully!",
       timer: 1500,
       showConfirmButton: false,
       timerProgressBar: true
-    })
-  }
-
-  // useEffect(() => {
-  //   if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-  //     setIsDarkMode(true);
-  //   }
-  //   fetchTemplateData();
-  //   fetchColumnData();
-  // }, []);
-
-  // useEffect(() => {
-  //   if (parseTemplateData && Array.isArray(templateParams)) {
-  //     const payload = {
-  //       data: parseTemplateData,
-  //       params: templateParams,
-  //     };
-  //     setTemplateData(payload);
-  //     localStorage.setItem("templateData", JSON.stringify(payload));
-  //   }
-  // }, [parseTemplateData, templateParams]);
-
-  // const fetchTemplateData = () => {
-  //   const token = process.env.NEXT_PUBLIC_JWT_TOKEN;
-  //   fetch(
-  //     `${base_url}template/template?page=1&limit=1000&vendorId=${vendorId}`,
-  //     {
-  //       method: "GET",
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //         "Content-Type": "application/json",
-  //       },
-  //     }
-  //   )
-  //     .then((res) => res.text())
-  //     .then((encryptedResponse) => {
-  //       const bytes = CryptoJS.AES.decrypt(encryptedResponse, SECRET_KEY);
-  //       const decryptedText = bytes.toString(CryptoJS.enc.Utf8);
-  //       const parsedData = JSON.parse(decryptedText);
-  //       setDecryptedData(parsedData.data);
-  //     })
-  //     .catch(console.error);
-  // };
-
-  // const fetchColumnData = () => {
-  //   const token = process.env.NEXT_PUBLIC_JWT_TOKEN;
-  //   fetch(`${base_url}Template/columns`, {
-  //     method: "GET",
-  //     headers: {
-  //       Authorization: `Bearer ${token}`,
-  //       "Content-Type": "application/json",
-  //     },
-  //   })
-  //     .then((res) => res.text())
-  //     .then((encryptedResponse) => {
-  //       const bytes = CryptoJS.AES.decrypt(encryptedResponse, SECRET_KEY);
-  //       const decryptedText = bytes.toString(CryptoJS.enc.Utf8);
-  //       const parsedData = JSON.parse(decryptedText);
-  //       setColumnData(parsedData.columns);
-  //     })
-  //     .catch(console.error);
-  // };
-
-  // useEffect(() => {
-  //   if (decryptedData.length > 0 && templateId) {
-  //     const selectedTemplate = decryptedData.find((t) => t.id === templateId);
-  //     if (selectedTemplate) {
-  //       setTemplateName(selectedTemplate.templateName);
-
-  //       try {
-  //         const parsedData = JSON.parse(selectedTemplate.data);
-  //         setParseTemplateData(parsedData);
-
-  //         let components = [];
-  //         if (parsedData.template?.components) {
-  //           components = parsedData.template.components;
-  //         } else if (parsedData.components) {
-  //           components = parsedData.components;
-  //         } else if (Array.isArray(parsedData)) {
-  //           components = parsedData;
-  //         }
-
-  //         setTemplateData1(components);
-
-  //         const params = extractTemplateParameters(components);
-  //         const formattedParams = params.map((param) => ({
-  //           value: param,
-  //           name: "",
-  //           isStatic: 1, // Default to static
-  //         }));
-  //         setTemplateParams(formattedParams);
-  //       } catch (err) {
-  //         console.error("Parse error:", err);
-  //       }
-  //     }
-  //   }
-  // }, [decryptedData, templateId]);
-
-  // const extractTemplateParameters = (components) => {
-  //   const parameters = new Set();
-  //   components.forEach((component) => {
-  //     const allText = [
-  //       component.text,
-  //       ...(component.buttons || []).map((btn) => btn.text),
-  //     ];
-  //     allText.forEach((text) => {
-  //       if (text) {
-  //         const matches = text.match(/\{\{\s*(\d+)\s*\}\}/g);
-  //         matches?.forEach((match) => {
-  //           parameters.add(match.replace(/\D/g, ""));
-  //         });
-  //       }
-  //     });
-  //   });
-  //   return Array.from(parameters).sort((a, b) => a - b);
-  // };
-
-  // const handleParamChange = (paramValue, newName, isStatic) => {
-  //   setTemplateParams((prevParams) =>
-  //     prevParams.map((item) =>
-  //       item.value === paramValue ? { ...item, name: newName, isStatic } : item
-  //     )
-  //   );
-  // };
-
-  // const handleSelectChange = (e) => {
-  //   const selectedId = e.target.value;
-  //   const selectedTemplate = decryptedData.find((t) => t.id === selectedId);
-
-  //   if (!selectedTemplate) return;
-
-  //   setTemplateId(selectedTemplate.id);
-  //   setTemplateName(selectedTemplate.templateName);
-
-  //   try {
-  //     const parsedData = JSON.parse(selectedTemplate.data);
-  //     setParseTemplateData(parsedData);
-
-  //     let components = [];
-  //     if (parsedData.template?.components) {
-  //       components = parsedData.template.components;
-  //     } else if (parsedData.components) {
-  //       components = parsedData.components;
-  //     } else if (Array.isArray(parsedData)) {
-  //       components = parsedData;
-  //     }
-
-  //     setTemplateData1(components);
-
-  //     const params = extractTemplateParameters(components);
-  //     const formattedParams = params.map((param) => ({
-  //       value: param,
-  //       name: "",
-  //     }));
-  //     setTemplateParams(formattedParams);
-  //   } catch (err) {
-  //     console.error("Template parsing error:", err);
-  //     setTemplateName("");
-  //     setTemplateParams([]);
-  //     setParseTemplateData(null);
-  //   }
-  // };
-
-  // // ---------------- Template Preview -----------------------
-
-  // // const templatePreviewData = parsedData
-
-  // const components =
-  //   parseTemplateData?.template?.components ||
-  //   parseTemplateData?.components ||
-  //   [];
-
-  // const getBodyContent = (text, example) => {
-  //   if (!example?.body_text?.[0]) return text;
-  //   let updated = text;
-  //   example.body_text[0].forEach((val, i) => {
-  //     updated = updated.replace(`{{${i + 1}}}`, val);
-  //   });
-  //   return updated;
-  // };
-
-  // const getDynamicUrl = (url, example) => {
-  //   if (!url.includes("{{")) return url;
-  //   return url.replace(/{{(\d+)}}/g, (_, idx) => example?.[idx - 1] || "");
-  // };
-
-  // // In your useEffect that sets templateData
-  // useEffect(() => {
-  //   if (parseTemplateData) {
-  //     const formattedParams = Object.entries(templateParams).map(
-  //       ([key, value]) => ({
-  //         value: key,
-  //         name: value,
-  //         isStatic: 1,
-  //       })
-  //     );
-
-  //     const payload = {
-  //       data: parseTemplateData,
-  //       params: templateParams,
-  //     };
-
-  //     localStorage.setItem("templateData", JSON.stringify(payload));
-  //   }
-  // }, [parseTemplateData, templateParams]);
+    });
+  };
 
   return (
     <>
@@ -589,7 +364,6 @@ export default function TextSidebar({
               <option value="" disabled>
                 Select a template
               </option>
-
               {decryptedData
                 .filter((template) => template.templateName)
                 .map((template) => (
@@ -600,75 +374,212 @@ export default function TextSidebar({
             </select>
           )}
 
-          {/* Display template parameters */}
           {templateData1 && (
-            <div className="mt-4">
+            <div className="mt-4 overflow-y-auto flex-1">
               <h4 className="font-medium mb-2">Template Parameters:</h4>
-              {templateParams.length > 0 &&
-                templateParams
-                  .sort((a, b) => a.value - b.value)
-                  .map((param) => {
-                    // Extract body params from BODY section
-                    const bodySection = components.find(
-                      (item) => item.type === "BODY"
-                    );
-                    const paramLabel =
-                      bodySection?.example?.body_text?.[0]?.[param.value - 1] ||
-                      "";
+              
+              {components.map((component, compIndex) => {
+                if (component.type === "HEADER") {
+                  if (component.format === "TEXT" && component.text) {
+                    const matches = component.text.match(/\{\{\s*(\d+)\s*\}\}/g) || [];
+                    const uniqueParams = [...new Set(matches)];
 
                     return (
-                      <div key={param.value} className="mb-3">
-                        <label className="block text-sm font-medium mb-1">
-                          Value for {`{{${param.value}}}`}{" "}
-                          {paramLabel && (
-                            <span className="text-gray-600">{`(${paramLabel}):`}</span>
-                          )}
-                        </label>
+                      <div key={`header-text-${compIndex}`} className="mb-6">
+                        <h5 className="font-medium text-md mb-2">Header Parameters:</h5>
+                        {uniqueParams.map((paramMatch) => {
+                          const paramNum = paramMatch.replace(/\D/g, "");
+                          const paramKey = `header_field_${paramNum}`;
+                          const paramValue = templateParams[paramKey] || {
+                            value: paramNum,
+                            name: "",
+                            isStatic: 1,
+                          };
 
-                        {/* Dropdown */}
-                        <select
-                          className="block w-full border border-gray-300 rounded-md p-2 mb-2"
-                          value={
-                            param.name &&
-                            Object.keys(columnData).includes(param.name)
-                              ? param.name
-                              : param.isStatic === 0
-                              ? "custom"
-                              : ""
-                          }
-                          onChange={(e) => {
-                            const selected = e.target.value;
-                            if (selected === "custom") {
-                              handleParamChange(param.value, "", 0); // custom input mode
-                            } else {
-                              handleParamChange(param.value, selected, 1); // static dropdown selection
-                            }
-                          }}
-                        >
-                          <option value="">Select an option</option>
-                          {Object.entries(columnData).map(([key, label]) => (
-                            <option key={key} value={key}>
-                              {label}
-                            </option>
-                          ))}
-                          <option value="custom">Custom Input</option>
-                        </select>
+                          return (
+                            <div key={paramKey} className="mb-3">
+                              <label className="block text-sm font-medium mb-1">
+                                Header Text for {paramMatch}
+                              </label>
 
-                        {/* Custom Input */}
-                        {param.isStatic === 0 && (
-                          <input
-                            type="text"
-                            className="block w-full border border-gray-300 rounded-md p-2"
-                            placeholder="Enter custom value"
-                            value={param.name}
-                            onChange={(e) =>
-                              handleParamChange(param.value, e.target.value, 0)
-                            }
-                          />
-                        )}
+                              <select
+                                className="block w-full border border-gray-300 rounded-md p-2 mb-2"
+                                value={
+                                  paramValue.name && paramValue.isStatic === 1
+                                    ? paramValue.name
+                                    : paramValue.isStatic === 0
+                                    ? "custom"
+                                    : ""
+                                }
+                                onChange={(e) => {
+                                  const selected = e.target.value;
+                                  if (selected === "custom") {
+                                    handleParamChange(paramKey, "", 0);
+                                  } else {
+                                    handleParamChange(paramKey, selected, 1);
+                                  }
+                                }}
+                              >
+                                <option value="">Select an option</option>
+                                {Object.entries(columnData).map(([key, label]) => (
+                                  <option key={key} value={key}>
+                                    {label}
+                                  </option>
+                                ))}
+                                <option value="custom">Custom Input</option>
+                              </select>
+
+                              {(!paramValue.isStatic || paramValue.isStatic === 0) && (
+                                <input
+                                  type="text"
+                                  className="block w-full border border-gray-300 rounded-md p-2"
+                                  placeholder="Enter header text"
+                                  value={paramValue.name || ""}
+                                  onChange={(e) =>
+                                    handleParamChange(paramKey, e.target.value, 0)
+                                  }
+                                />
+                              )}
+                            </div>
+                          );
+                        })}
                       </div>
                     );
-                  })}
+                  } else if (["IMAGE", "VIDEO", "DOCUMENT"].includes(component.format)) {
+                    const mediaType = component.format.toLowerCase();
+                    const paramKey = `header_${mediaType}`;
+                    const currentValue = templateParams[paramKey] || "";
+
+                    return (
+                      <div key={`header-media-${compIndex}`} className="mb-6">
+                        <h5 className="font-medium text-md mb-2">Header Media:</h5>
+                        <div className="mb-3">
+                          <label className="block text-sm font-medium mb-1">
+                            Select {mediaType} for header
+                          </label>
+                          
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="file"
+                              ref={fileInputRef}
+                              className="hidden"
+                              accept={
+                                mediaType === "image"
+                                  ? "image/*"
+                                  : mediaType === "video"
+                                  ? "video/*"
+                                  : "*"
+                              }
+                              onChange={(e) => handleFileChange(e, component.format)}
+                            />
+                            <button
+                              onClick={triggerFileInput}
+                              className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
+                            >
+                              Upload {mediaType}
+                            </button>
+                            
+                            {headerMediaPreview && (
+                              <div className="flex items-center">
+                                {headerMediaPreview.type === "image" && (
+                                  <img
+                                    src={headerMediaPreview.url}
+                                    alt="Header preview"
+                                    className="h-10 w-10 object-cover rounded"
+                                  />
+                                )}
+                                <span className="ml-2 text-sm">
+                                  {headerMediaPreview.name}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                          
+                          {currentValue && (
+                            <div className="mt-2 text-sm text-gray-600">
+                              Current: {currentValue}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  }
+                }
+
+                if (component.type === "BODY" && component.text) {
+                  const matches = component.text.match(/\{\{\s*(\d+)\s*\}\}/g) || [];
+                  const uniqueParams = [...new Set(matches)];
+                  const exampleTexts = component.example?.body_text?.[0] || [];
+
+                  return (
+                    <div key={`body-params-${compIndex}`} className="mb-6">
+                      <h5 className="font-medium text-md mb-2">Body Parameters:</h5>
+                      {uniqueParams.map((paramMatch) => {
+                        const paramNum = paramMatch.replace(/\D/g, "");
+                        const paramKey = `field_${paramNum}`;
+                        const paramValue = templateParams[paramKey] || {
+                          value: paramNum,
+                          name: "",
+                          isStatic: 1,
+                        };
+                        const exampleText = exampleTexts[paramNum - 1] || "";
+
+                        return (
+                          <div key={paramKey} className="mb-3">
+                            <label className="block text-sm font-medium mb-1">
+                              Value for {paramMatch}
+                              {exampleText && (
+                                <span className="text-gray-600">{` (Example: ${exampleText})`}</span>
+                              )}
+                            </label>
+
+                            <select
+                              className="block w-full border border-gray-300 rounded-md p-2 mb-2"
+                              value={
+                                paramValue.name && paramValue.isStatic === 1
+                                  ? paramValue.name
+                                  : paramValue.isStatic === 0
+                                  ? "custom"
+                                  : ""
+                              }
+                              onChange={(e) => {
+                                const selected = e.target.value;
+                                if (selected === "custom") {
+                                  handleParamChange(paramKey, "", 0);
+                                } else {
+                                  handleParamChange(paramKey, selected, 1);
+                                }
+                              }}
+                            >
+                              <option value="">Select an option</option>
+                              {Object.entries(columnData).map(([key, label]) => (
+                                <option key={key} value={key}>
+                                  {label}
+                                </option>
+                              ))}
+                              <option value="custom">Custom Input</option>
+                            </select>
+
+                            {(!paramValue.isStatic || paramValue.isStatic === 0) && (
+                              <input
+                                type="text"
+                                className="block w-full border border-gray-300 rounded-md p-2"
+                                placeholder="Enter custom value"
+                                value={paramValue.name || ""}
+                                onChange={(e) =>
+                                  handleParamChange(paramKey, e.target.value, 0)
+                                }
+                              />
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  );
+                }
+
+                return null;
+              })}
 
               <div
                 className="p-5 rounded m-10 mx-20"
@@ -676,8 +587,8 @@ export default function TextSidebar({
                   backgroundImage: `url(${whatsappImage.src})`,
                   backgroundColor: "#e5ddd5",
                   backgroundRepeat: "repeat",
-                  backgroundSize: "contain", // or 'auto' if your image is small
-                  backgroundBlendMode: "overlay", // subtle blend with background color
+                  backgroundSize: "contain",
+                  backgroundBlendMode: "overlay",
                 }}
               >
                 <div className="bg-[#f4f4f4] p-4 rounded-lg max-w-[90%] mx-2 my-2 relative shadow border border-[#e5ddd5]">
@@ -694,8 +605,6 @@ export default function TextSidebar({
                         };
 
                         const mediaUrl = getMediaUrlFromHandle(handle);
-
-                        const isValidImage = mediaUrl && mediaUrl !== "";
 
                         switch (format) {
                           case "TEXT":
@@ -805,7 +714,6 @@ export default function TextSidebar({
                     }
                   })}
 
-                  {/* Message timestamp */}
                   <div className="text-right text-[0.6875rem] text-[#667781] mt-2">
                     {new Date().toLocaleTimeString([], {
                       hour: "2-digit",
@@ -816,13 +724,253 @@ export default function TextSidebar({
               </div>
             </div>
           )}
-          <div className="flex justify-end" onClick={handleSave}>
-          <button className="bg-orange-600 hover:bg-orange-700 text-white font-medium py-2 px-4 rounded-md shadow-sm transition duration-200 ">
-            Save
-          </button>
+          
+          <div className="flex justify-end mt-4">
+            <button 
+              className="bg-orange-600 hover:bg-orange-700 text-white font-medium py-2 px-4 rounded-md shadow-sm transition duration-200"
+              onClick={handleSave}
+            >
+              Save
+            </button>
           </div>
         </aside>
       )}
     </>
   );
 }
+  
+// const handleSelectChange = (e) => {
+//   const selectedId = e.target.value;
+//   const selectedTemplate = decryptedData.find((t) => t.id === selectedId);
+
+//   if (!selectedTemplate) return;
+
+//   setTemplateId(selectedTemplate.id);
+//   setTemplateName(selectedTemplate.templateName);
+
+//   try {
+//     const parsedData = JSON.parse(selectedTemplate.data);
+//     setParseTemplateData(parsedData);
+
+//     let components = [];
+//     if (parsedData.template?.components) {
+//       components = parsedData.template.components;
+//     } else if (parsedData.components) {
+//       components = parsedData.components;
+//     } else if (Array.isArray(parsedData)) {
+//       components = parsedData;
+//     }
+
+//     setTemplateData1(components);
+//     const params = extractTemplateParameters(components);
+//     setTemplateParams(params);
+//   } catch (err) {
+//     console.error("Template parsing error:", err);
+//     setTemplateName("");
+//     setTemplateParams({});
+//     setParseTemplateData(null);
+//   }
+// };
+
+// useEffect(() => {
+//   if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+//     setIsDarkMode(true);
+//   }
+//   fetchTemplateData();
+//   fetchColumnData();
+// }, []);
+
+// useEffect(() => {
+//   if (parseTemplateData && Array.isArray(templateParams)) {
+//     const payload = {
+//       data: parseTemplateData,
+//       params: templateParams,
+//     };
+//     setTemplateData(payload);
+//     localStorage.setItem("templateData", JSON.stringify(payload));
+//   }
+// }, [parseTemplateData, templateParams]);
+
+// const fetchTemplateData = () => {
+//   const token = process.env.NEXT_PUBLIC_JWT_TOKEN;
+//   fetch(
+//     `${base_url}template/template?page=1&limit=1000&vendorId=${vendorId}`,
+//     {
+//       method: "GET",
+//       headers: {
+//         Authorization: `Bearer ${token}`,
+//         "Content-Type": "application/json",
+//       },
+//     }
+//   )
+//     .then((res) => res.text())
+//     .then((encryptedResponse) => {
+//       const bytes = CryptoJS.AES.decrypt(encryptedResponse, SECRET_KEY);
+//       const decryptedText = bytes.toString(CryptoJS.enc.Utf8);
+//       const parsedData = JSON.parse(decryptedText);
+//       setDecryptedData(parsedData.data);
+//     })
+//     .catch(console.error);
+// };
+
+// const fetchColumnData = () => {
+//   const token = process.env.NEXT_PUBLIC_JWT_TOKEN;
+//   fetch(`${base_url}Template/columns`, {
+//     method: "GET",
+//     headers: {
+//       Authorization: `Bearer ${token}`,
+//       "Content-Type": "application/json",
+//     },
+//   })
+//     .then((res) => res.text())
+//     .then((encryptedResponse) => {
+//       const bytes = CryptoJS.AES.decrypt(encryptedResponse, SECRET_KEY);
+//       const decryptedText = bytes.toString(CryptoJS.enc.Utf8);
+//       const parsedData = JSON.parse(decryptedText);
+//       setColumnData(parsedData.columns);
+//     })
+//     .catch(console.error);
+// };
+
+// useEffect(() => {
+//   if (decryptedData.length > 0 && templateId) {
+//     const selectedTemplate = decryptedData.find((t) => t.id === templateId);
+//     if (selectedTemplate) {
+//       setTemplateName(selectedTemplate.templateName);
+
+//       try {
+//         const parsedData = JSON.parse(selectedTemplate.data);
+//         setParseTemplateData(parsedData);
+
+//         let components = [];
+//         if (parsedData.template?.components) {
+//           components = parsedData.template.components;
+//         } else if (parsedData.components) {
+//           components = parsedData.components;
+//         } else if (Array.isArray(parsedData)) {
+//           components = parsedData;
+//         }
+
+//         setTemplateData1(components);
+
+//         const params = extractTemplateParameters(components);
+//         const formattedParams = params.map((param) => ({
+//           value: param,
+//           name: "",
+//           isStatic: 1, // Default to static
+//         }));
+//         setTemplateParams(formattedParams);
+//       } catch (err) {
+//         console.error("Parse error:", err);
+//       }
+//     }
+//   }
+// }, [decryptedData, templateId]);
+
+// const extractTemplateParameters = (components) => {
+//   const parameters = new Set();
+//   components.forEach((component) => {
+//     const allText = [
+//       component.text,
+//       ...(component.buttons || []).map((btn) => btn.text),
+//     ];
+//     allText.forEach((text) => {
+//       if (text) {
+//         const matches = text.match(/\{\{\s*(\d+)\s*\}\}/g);
+//         matches?.forEach((match) => {
+//           parameters.add(match.replace(/\D/g, ""));
+//         });
+//       }
+//     });
+//   });
+//   return Array.from(parameters).sort((a, b) => a - b);
+// };
+
+// const handleParamChange = (paramValue, newName, isStatic) => {
+//   setTemplateParams((prevParams) =>
+//     prevParams.map((item) =>
+//       item.value === paramValue ? { ...item, name: newName, isStatic } : item
+//     )
+//   );
+// };
+
+// const handleSelectChange = (e) => {
+//   const selectedId = e.target.value;
+//   const selectedTemplate = decryptedData.find((t) => t.id === selectedId);
+
+//   if (!selectedTemplate) return;
+
+//   setTemplateId(selectedTemplate.id);
+//   setTemplateName(selectedTemplate.templateName);
+
+//   try {
+//     const parsedData = JSON.parse(selectedTemplate.data);
+//     setParseTemplateData(parsedData);
+
+//     let components = [];
+//     if (parsedData.template?.components) {
+//       components = parsedData.template.components;
+//     } else if (parsedData.components) {
+//       components = parsedData.components;
+//     } else if (Array.isArray(parsedData)) {
+//       components = parsedData;
+//     }
+
+//     setTemplateData1(components);
+
+//     const params = extractTemplateParameters(components);
+//     const formattedParams = params.map((param) => ({
+//       value: param,
+//       name: "",
+//     }));
+//     setTemplateParams(formattedParams);
+//   } catch (err) {
+//     console.error("Template parsing error:", err);
+//     setTemplateName("");
+//     setTemplateParams([]);
+//     setParseTemplateData(null);
+//   }
+// };
+
+// // ---------------- Template Preview -----------------------
+
+// // const templatePreviewData = parsedData
+
+// const components =
+//   parseTemplateData?.template?.components ||
+//   parseTemplateData?.components ||
+//   [];
+
+// const getBodyContent = (text, example) => {
+//   if (!example?.body_text?.[0]) return text;
+//   let updated = text;
+//   example.body_text[0].forEach((val, i) => {
+//     updated = updated.replace(`{{${i + 1}}}`, val);
+//   });
+//   return updated;
+// };
+
+// const getDynamicUrl = (url, example) => {
+//   if (!url.includes("{{")) return url;
+//   return url.replace(/{{(\d+)}}/g, (_, idx) => example?.[idx - 1] || "");
+// };
+
+// // In your useEffect that sets templateData
+// useEffect(() => {
+//   if (parseTemplateData) {
+//     const formattedParams = Object.entries(templateParams).map(
+//       ([key, value]) => ({
+//         value: key,
+//         name: value,
+//         isStatic: 1,
+//       })
+//     );
+
+//     const payload = {
+//       data: parseTemplateData,
+//       params: templateParams,
+//     };
+
+//     localStorage.setItem("templateData", JSON.stringify(payload));
+//   }
+// }, [parseTemplateData, templateParams]);

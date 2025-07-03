@@ -37,12 +37,12 @@ function TriggerNode({ data, selected, id }) {
       </button> */}
 
       {/* Handles */}
-      <Handle
+      {/* <Handle
         id="a"
         type="target"
         position={Position.Left}
         className="w-1 rounded-full bg-slate-500"
-      />
+      /> */}
       <Handle
         id="b"
         type="source"

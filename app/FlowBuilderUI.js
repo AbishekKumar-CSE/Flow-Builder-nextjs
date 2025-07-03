@@ -83,7 +83,7 @@ let id = 0;
 // const getId = () => `node_${id++}`;
 
 const App = () => {
-  console.log("version 5.3");
+  console.log("version 0.2");
   const token = process.env.NEXT_PUBLIC_JWT_TOKEN;
   // Define custom node types
   const nodeTypes = useMemo(
@@ -113,6 +113,7 @@ const App = () => {
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
   const [selectedElements, setSelectedElements] = useState([]);
   const [decryptedData, setDecryptedData] = useState(null);
+  // const [flowTitle, setFlowTitle] = useState();
 
   const [title, setTitle] = useState("");
   const [flowTitle, setFlowTitle] = useState("");
@@ -461,9 +462,11 @@ const App = () => {
           const parsedData = JSON.parse(decryptedText);
           //console.log("Decrypted response:", parsedData);
           setDecryptedData(parsedData?.data);
-          const parsedTitle = JSON.parse(decryptedText)?.title;
-          setFlowTitle(parsedTitle);
-          localStorage.setItem("flowTitle", parsedTitle);
+          const data = JSON.parse(parsedData?.data);
+          console.log("Decrypted data:", data);
+          const title = data.title;
+          setFlowTitle(title);
+          localStorage.setItem("flowTitle", title);
         } catch (error) {
           console.error("Decryption error:", error);
           console.error("Raw response:", responseText);
@@ -473,7 +476,6 @@ const App = () => {
         console.error("Fetch error:", error);
       });
   }, [receivedVendorId]);
-  //console.log(flowTitle, "Title of the flow");
 
   const onSave = useCallback(() => {
     if (reactFlowInstance) {
@@ -534,7 +536,7 @@ const App = () => {
               }
             });
 
-            reFetchFlow();
+            // reFetchFlow();
           })
           .catch((error) => {
             console.error("PUT error:", error);
@@ -571,6 +573,8 @@ const App = () => {
   useEffect(() => {
     reFetchFlow();
   }, []);
+
+  // console.log(flowTitle, "Decrypted data from the Home UI");
 
   useEffect(() => {
     if (decryptedData) {
