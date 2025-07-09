@@ -26,6 +26,8 @@ export default function TextSidebar({
   const [headerMedia, setHeaderMedia] = useState(null);
   const [headerMediaPreview, setHeaderMediaPreview] = useState(null);
   const [docUrl, setDocUrl] = useState("");
+
+  const [tempParams, setTempParams] = useState([])
   
   const fileInputRef = useRef(null);
   const base_url = process.env.NEXT_PUBLIC_BASE_URL;
@@ -50,6 +52,9 @@ export default function TextSidebar({
       setTemplateData(payload);
       localStorage.setItem("templateData", JSON.stringify(payload));
     }
+
+    setTempParams(selectedNode.data.templateParams);
+
   }, [parseTemplateData, templateParams]);
 
   const fetchTemplateData = () => {
@@ -124,45 +129,88 @@ export default function TextSidebar({
     }
   }, [decryptedData, templateId]);
 
-  const extractTemplateParameters = (components) => {
-    const parameters = {};
+  // const extractTemplateParameters = (components) => {
+  //   const parameters = {};
 
-    components.forEach((component) => {
-      if (component.type === "HEADER") {
-        if (component.format === "TEXT" && component.text) {
-          const matches = component.text.match(/\{\{\s*(\d+)\s*\}\}/g) || [];
-          matches?.forEach((match) => {
-            const paramNum = match.replace(/\D/g, "");
-            parameters[`header_field_${paramNum}`] = "";
-          });
-        } else if (component.format === "IMAGE") {
-          parameters.header_image = "";
-        } else if (component.format === "VIDEO") {
-          parameters.header_video = "";
-        } else if (component.format === "DOCUMENT") {
-          parameters.header_document = "";
-        }
-      } else if (component.type === "BODY" && component.text) {
+  //   components.forEach((component) => {
+  //     if (component.type === "HEADER") {
+  //       if (component.format === "TEXT" && component.text) {
+  //         const matches = component.text.match(/\{\{\s*(\d+)\s*\}\}/g) || [];
+  //         matches?.forEach((match) => {
+  //           const paramNum = match.replace(/\D/g, "");
+  //           parameters[`header_field_${paramNum}`] = "";
+  //         });
+  //       } else if (component.format === "IMAGE") {
+  //         parameters.header_image = "";
+  //       } else if (component.format === "VIDEO") {
+  //         parameters.header_video = "";
+  //       } else if (component.format === "DOCUMENT") {
+  //         parameters.header_document = "";
+  //       }
+  //     } else if (component.type === "BODY" && component.text) {
+  //       const matches = component.text.match(/\{\{\s*(\d+)\s*\}\}/g) || [];
+  //       matches?.forEach((match) => {
+  //         const paramNum = match.replace(/\D/g, "");
+  //         parameters[`field_${paramNum}`] = "";
+  //       });
+  //     } else if (component.type === "BUTTONS" && component.buttons) {
+  //       component.buttons.forEach((btn, index) => {
+  //         if (btn.text) {
+  //           const matches = btn.text.match(/\{\{\s*(\d+)\s*\}\}/g) || [];
+  //           matches?.forEach((match) => {
+  //             const paramNum = match.replace(/\D/g, "");
+  //             parameters[`button_${index}`] = "";
+  //           });
+  //         }
+  //       });
+  //     }
+  //   });
+
+  //   return parameters;
+  // };
+
+  const extractTemplateParameters = (components) => {
+  const parameters = {};
+
+  components.forEach((component) => {
+    if (component.type === "HEADER") {
+      if (component.format === "TEXT" && component.text) {
         const matches = component.text.match(/\{\{\s*(\d+)\s*\}\}/g) || [];
         matches?.forEach((match) => {
           const paramNum = match.replace(/\D/g, "");
-          parameters[`field_${paramNum}`] = "";
+          parameters[`header_field_${paramNum}`] = "";
         });
-      } else if (component.type === "BUTTONS" && component.buttons) {
-        component.buttons.forEach((btn, index) => {
-          if (btn.text) {
-            const matches = btn.text.match(/\{\{\s*(\d+)\s*\}\}/g) || [];
-            matches?.forEach((match) => {
-              const paramNum = match.replace(/\D/g, "");
-              parameters[`button_${index}`] = "";
-            });
-          }
-        });
+      } else if (component.format === "IMAGE") {
+        parameters.header_image = "";
+      } else if (component.format === "VIDEO") {
+        parameters.header_video = "";
+      } else if (component.format === "DOCUMENT") {
+        parameters.header_document = "";
       }
-    });
+    } else if (component.type === "BODY" && component.text) {
+      const matches = component.text.match(/\{\{\s*(\d+)\s*\}\}/g) || [];
+      matches?.forEach((match) => {
+        const paramNum = match.replace(/\D/g, "");
+        parameters[`field_${paramNum}`] = "";
+      });
+    } else if (component.type === "BUTTONS" && component.buttons) {
+      component.buttons.forEach((btn, index) => {
+        if (btn.type === "COPY_CODE" || btn.type === "DYNAMIC_BUTTON") {
+          // For COPY_CODE and DYNAMIC_BUTTON, use the button type in the parameter name
+          parameters[`${btn.type.toLowerCase()}_${index}`] = "";
+        } else if (btn.text) {
+          const matches = btn.text.match(/\{\{\s*(\d+)\s*\}\}/g) || [];
+          matches?.forEach((match) => {
+            const paramNum = match.replace(/\D/g, "");
+            parameters[`button_${index}`] = "";
+          });
+        }
+      });
+    }
+  });
 
-    return parameters;
-  };
+  return parameters;
+};
 
   const handleParamChange = (fieldName, newValue) => {
     setTemplateParams((prevParams) => ({
@@ -372,7 +420,7 @@ export default function TextSidebar({
                               </label>
                               <select
                                 className="block w-full border border-gray-300 rounded-md p-2 mb-2"
-                                value={paramValue}
+                                value={paramValue || tempParams?.header_field_1}
                                 onChange={(e) => handleParamChange(paramKey, e.target.value)}
                               >
                                 <option value="">Select an option</option>
@@ -462,6 +510,9 @@ export default function TextSidebar({
                         const paramValue = templateParams[paramKey] || "";
                         const exampleText = exampleTexts[paramNum - 1] || "";
 
+                        const str = paramMatch;
+                        const number = parseInt(str.slice(2, -2), 10);
+
                         return (
                           <div key={paramKey} className="mb-3">
                             <label className="block text-sm font-medium mb-1">
@@ -472,7 +523,7 @@ export default function TextSidebar({
                             </label>
                             <select
                               className="block w-full border border-gray-300 rounded-md p-2 mb-2"
-                              value={paramValue}
+                              value={paramValue || tempParams?.[`field_${number}`]}
                               onChange={(e) => handleParamChange(paramKey, e.target.value)}
                             >
                               <option value="">Select an option</option>
@@ -488,6 +539,39 @@ export default function TextSidebar({
                     </div>
                   );
                 }
+
+                {component.type === "BUTTONS" && component.buttons && (
+  <div key={`buttons-${compIndex}`} className="mb-6">
+    <h5 className="font-medium text-md mb-2">Button Parameters:</h5>
+    {component.buttons.map((btn, btnIndex) => {
+      if (btn.type === "COPY_CODE" || btn.type === "DYNAMIC_BUTTON") {
+        const paramKey = `${btn.type.toLowerCase()}_${btnIndex}`;
+        const paramValue = templateParams[paramKey] || "";
+
+        return (
+          <div key={paramKey} className="mb-3">
+            <label className="block text-sm font-medium mb-1">
+              Value for {btn.type} button {btnIndex + 1}
+            </label>
+            <select
+              className="block w-full border border-gray-300 rounded-md p-2 mb-2"
+              value={paramValue}
+              onChange={(e) => handleParamChange(paramKey, e.target.value)}
+            >
+              <option value="">Select an option</option>
+              {Object.entries(columnData).map(([key, label]) => (
+                <option key={key} value={key}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </div>
+        );
+      }
+      return null;
+    })}
+  </div>
+)}
 
                 return null;
               })}
