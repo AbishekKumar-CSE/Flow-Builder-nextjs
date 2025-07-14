@@ -34,6 +34,7 @@ export default function TextSidebar({
   const vendorId = process.env.NEXT_PUBLIC_VENDOR_ID;
   const vendor__uid = process.env.NEXT_PUBLIC_VENDOR_UID;
   const base_uri = process.env.NEXT_PUBLIC_BASE_URI;
+  const [vid, setVid] = useState()
 
   useEffect(() => {
     if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
@@ -51,6 +52,8 @@ export default function TextSidebar({
       };
       setTemplateData(payload);
       localStorage.setItem("templateData", JSON.stringify(payload));
+      const v_id = localStorage.getItem("vendorIdLocal");
+      setVid(v_id);
     }
 
     setTempParams(selectedNode.data.templateParams);
@@ -307,9 +310,10 @@ export default function TextSidebar({
       name: file.name,
     });
 
+    console.log(vid, "utagdygdvuybgyugugaweyuy")
     const formData = new FormData();
     formData.append("filepond", file);
-    formData.append("vendorId", vendor__uid);
+    formData.append("vendorId", vid);
     formData.append("uploadfile", format_typ);
 
     try {
