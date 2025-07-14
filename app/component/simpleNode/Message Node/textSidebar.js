@@ -325,9 +325,18 @@ export default function TextSidebar({
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-      const responseData = await response.json();
-      const url = responseData.url || responseData.data?.url;
-      setDocUrl(url);
+const encryptedText = await response.text(); // since it's encrypted, use .text(), not .json()
+
+// Decrypt
+const bytes = CryptoJS.AES.decrypt(encryptedText, SECRET_KEY);
+const decryptedText = bytes.toString(CryptoJS.enc.Utf8);
+
+// Parse if it's JSON
+const decryptedData = JSON.parse(decryptedText);
+
+      // Then access the URL
+const url = decryptedData.url || decryptedData.data?.url;
+setDocUrl(url);
 
       setTemplateParams((prevParams) => ({
         ...prevParams,
