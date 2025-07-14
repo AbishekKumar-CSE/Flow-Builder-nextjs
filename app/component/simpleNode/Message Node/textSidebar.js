@@ -313,7 +313,7 @@ export default function TextSidebar({
     formData.append("uploadfile", format_typ);
 
     try {
-      const response = await fetch(`${base_url}uploadTempMedia`, {
+      const response = await fetch(`${base_url}media/upload-temp`, {
         method: "POST",
         body: formData,
       });
@@ -1028,7 +1028,7 @@ export default function TextSidebar({
 //     formData.append("uploadfile", format_typ);
 
 //     try {
-//       const response = await fetch(`${base_uri}uploadTempMedia`, {
+//       const response = await fetch(`${base_uri}media/upload-temp`, {
 //         method: "POST",
 //         body: formData,
 //       });
