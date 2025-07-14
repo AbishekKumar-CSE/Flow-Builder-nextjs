@@ -310,41 +310,46 @@ export default function TextSidebar({
       name: file.name,
     });
 
-    console.log(vid, "utagdygdvuybgyugugaweyuy")
     const formData = new FormData();
     formData.append("filepond", file);
     formData.append("vendorId", vid);
     formData.append("uploadfile", format_typ);
 
     try {
-      const response = await fetch(`${base_url}media/upload-temp`, {
-        method: "POST",
-        body: formData,
-      });
+  const response = await fetch(`${base_url}media/upload-temp`, {
+    method: "POST",
+    body: formData,
+  });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-const encryptedText = await response.text(); // since it's encrypted, use .text(), not .json()
+  if (!response.ok) {
+    throw new Error(`HTTP error! Status: ${response.status}`);
+  }
 
-// Decrypt
-const bytes = CryptoJS.AES.decrypt(encryptedText, SECRET_KEY);
-const decryptedText = bytes.toString(CryptoJS.enc.Utf8);
+  // Step 1: Get encrypted response text
+  const encryptedText = await response.text();
 
-// Parse if it's JSON
-const decryptedData = JSON.parse(decryptedText);
+  // Step 2: Decrypt the text
+  const bytes = CryptoJS.AES.decrypt(encryptedText, SECRET_KEY);
+  const decryptedText = bytes.toString(CryptoJS.enc.Utf8);
 
-      // Then access the URL
-const url = decryptedData.url || decryptedData.data?.url;
-setDocUrl(url);
+  if (!decryptedText) {
+    throw new Error("Decryption failed. Check SECRET_KEY or encryption format.");
+  }
 
-      setTemplateParams((prevParams) => ({
-        ...prevParams,
-        [`header_${fileType}`]: url,
-      }));
-    } catch (error) {
-      console.error("Upload error:", error);
-    }
+  // Step 3: Parse JSON
+  const decryptedData = JSON.parse(decryptedText);
+
+  // Step 4: Extract URL and set states
+  const url = decryptedData.url || decryptedData.data?.url;
+  setDocUrl(url);
+
+  setTemplateParams((prevParams) => ({
+    ...prevParams,
+    [`header_${fileType}`]: url,
+  }));
+} catch (error) {
+  console.error("Upload error:", error);
+}
   };
 
   const handleSave = () => {
@@ -500,7 +505,7 @@ setDocUrl(url);
                           
                           {currentValue && (
                             <div className="mt-2 text-sm text-gray-600">
-                              Current: {currentValue}
+                              {/* Current: {currentValue} */}
                             </div>
                           )}
                         </div>
